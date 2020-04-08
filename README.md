@@ -5,8 +5,6 @@ Hello friends! Recently I joined a team of translators who are working on transl
 
 To solve this, I wrote a small application that helps with translation.
 
-Below you will find the download link (replace [dot] with a dot).
-
 The program requires internal game resources. Dandylion allowed to distribute them with the program, while maintaining copyright. Therefore, I remind you that all game resources belong to Dandylion.co.kr. Please do not infringe copyright.
 
 The program was written very quickly, it may have errors. Please advise if such appear.
