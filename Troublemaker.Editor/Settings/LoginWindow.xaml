@@ -1,0 +1,22 @@
+﻿<Window x:Class="Troublemaker.Editor.Settings.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Authentication" MinWidth="380" MaxWidth="960" SizeToContent="WidthAndHeight" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Padding="5">
+    <StackPanel>
+        
+        <TextBlock Text="User name:" Margin="3,10,3,3" />
+        <TextBox Margin="3" Text="{Binding UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <TextBlock Text="Password:" Margin="3,10,3,3" Visibility="{Binding Visibility, ElementName=PasswordBox}"/>
+        <PasswordBox x:Name="PasswordBox" Margin="3" Visibility="Collapsed" />
+        
+        <TextBlock Text="Confirm password:" Margin="3,10,3,3" Visibility="{Binding Visibility, ElementName=ConfirmPasswordBox}" />
+        <PasswordBox x:Name="ConfirmPasswordBox" Margin="3" Visibility="Collapsed"/>
+        
+        <Button x:Name="Button" Content="OK" Command="{Binding ButtonCommand}"  Margin="3,10,3,3" />
+        
+        <TextBlock Text="Passwords are not stored in clear text. A secure password hash is stored inside the archive."
+                   TextWrapping="Wrap" FontSize="10" Foreground="Gray"
+                   Margin="3,10,3,3"  />
+    </StackPanel>
+</Window>

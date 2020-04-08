@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Troublemaker.Editor": {
+      "commandName": "Project",
+      "workingDirectory": "W:\\Steam\\steamapps\\common\\Troubleshooter"
+    }
+  }
+}

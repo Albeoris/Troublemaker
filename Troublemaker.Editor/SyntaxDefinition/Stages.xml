@@ -1,0 +1,91 @@
+﻿<SyntaxDefinition name="Stages" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+
+  <Color name="Comment" foreground="Green"/>
+  <Color name="UnknownTag" foreground="#FF0000"/>
+  <Color name="KnownTag" foreground="#4169E1"/>
+  <Color name="ColorTagDisabled" foreground="#000000"/>
+  <Color name="ColorTagGrey" foreground="#808080"/>
+  <Color name="ColorTagYellow" foreground="#FFD700"/>
+  <Color name="ColorTagRed" foreground="#AA0000"/>
+  <Color name="ColorTagGreen" foreground="#006400"/>
+  <Color name="ColorTagBlue" foreground="#0000CD"/>
+  <Color name="ColorTagPurple" foreground="#DA70D6"/>
+  <Color name="ColorTagWhite" foreground="#EEEEEE"/>
+
+  <RuleSet>
+    <Keywords fontWeight="bold" color="KnownTag">
+      <Word>{Next}</Word>
+      <Word>{Speaker}</Word>
+    </Keywords>
+    
+    <Span fontWeight="bold" color="KnownTag" begin="\{Char\s{1}\b" end="\}">
+      <RuleSet>
+        <Keywords>
+          <Word>Squall</Word>
+          <Word>Zell</Word>
+        </Keywords>
+
+        <Rule color="UnknownTag">\b[^}]+</Rule>
+      </RuleSet>
+    </Span>
+    
+    <Span fontWeight="bold" color="KnownTag" begin="\{Key\s{1}\b" end="\}">
+      <RuleSet>
+        <Keywords>
+          <Word>EscapeKey1</Word>
+          <Word>EscapeKey2</Word>
+          <Word>Menu</Word>
+          <Word>PartyKey</Word>
+        </Keywords>
+
+        <Rule color="UnknownTag">\b[^}]+</Rule>
+      </RuleSet>
+    </Span>
+    
+    <Span fontWeight="bold" color="KnownTag" begin="\{Color\s{1}\b" end="\}">
+      <RuleSet>
+        <Keywords color="ColorTagDisabled">
+          <Word>Disabled</Word>
+          <Word>DisabledBlink</Word>
+        </Keywords>
+        <Keywords color="ColorTagGrey">
+          <Word>Grey</Word>
+          <Word>GreyBlink</Word>
+        </Keywords>
+        <Keywords color="ColorTagYellow">
+          <Word>Yellow</Word>
+          <Word>YellowBlink</Word>
+        </Keywords>
+        <Keywords color="ColorTagRed">
+          <Word>Red</Word>
+          <Word>RedBlink</Word>
+        </Keywords>
+        <Keywords color="ColorTagGreen">
+          <Word>Green</Word>
+          <Word>GreenBlink</Word>
+        </Keywords>
+        <Keywords color="ColorTagBlue">
+          <Word>Blue</Word>
+          <Word>BlueBlink</Word>
+        </Keywords>
+        <Keywords color="ColorTagPurple">
+          <Word>Purple</Word>
+          <Word>PurpleBlink</Word>
+        </Keywords>
+        <Keywords color="ColorTagWhite">
+          <Word>White</Word>
+          <Word>WhiteBlink</Word>
+        </Keywords>
+
+        <Rule color="UnknownTag">\b[^}]+</Rule>
+      </RuleSet>
+    </Span>
+
+    <Rule fontWeight="bold" color="KnownTag">\{(Var|Pause)\s{1}[0-9]+\}</Rule>
+    
+    <!--Всё остальное-->
+    <Rule fontWeight="bold" color="UnknownTag">\{[^}]*\}</Rule>
+    <Rule fontWeight="bold" color="UnknownTag">\{</Rule>
+    
+  </RuleSet>
+</SyntaxDefinition>
