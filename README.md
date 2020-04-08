@@ -37,10 +37,10 @@ All translation data is stored in the Translation_???.zip archive in the program
 
 **Hot keys:**
 
-F1 - Change user
-F5 - Produce dic_text.dic
-Alt+1/2/3 - Go to UI-group on the Stage tab
-Alt+Left/Right - Change current language on the Stage tab
+- F1 - Change user
+- F5 - Produce dic_text.dic
+- Alt+1/2/3 - Go to UI-group on the Stage tab
+- Alt+Left/Right - Change current language on the Stage tab
 
 
 
