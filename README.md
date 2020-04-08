@@ -1,9 +1,6 @@
 # Troublemaker
 This is a toolkit for localizing the "Troubleshooter" game.
 
-Hello friends! Recently I joined a team of translators who are working on translating the game into Russian. The first thing I came across was the lack of convenient tools for translation. Especially with dialogs, since phrases in the dictionary files go out of order. In addition, it is not always clear who speaks to whom, with what emotions.
-
-To solve this, I wrote a small application that helps with translation.
 
 The program requires internal game resources. Dandylion allowed to distribute them with the program, while maintaining copyright. Therefore, I remind you that all game resources belong to Dandylion.co.kr. Please do not infringe copyright.
 
