@@ -8,7 +8,7 @@ namespace Troublemaker.Xml.Dialogs
         [XPath("@Text")] public String Text;
         [XPath("@C_Name")] public String Name;
 
-        public void Translate(LocalizationTree tree, out TextId messageId)
+        public void Translate(LocalizationTree tree, out TextReference messageId)
         {
             if (tree.TryGet(nameof(Text), out var child))
                 messageId = child.Value;

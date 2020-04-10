@@ -12,9 +12,9 @@ namespace Troublemaker.Xml
         public String NodeName => $"GoalCondition";
         public IEnumerable<(String name, IExpandable expandable)> EnumerateChildren() => Array.Empty<(String name, IExpandable expandable)>(); 
         
-        public IEnumerable<(String name, String key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(Stage stage)
+        public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
         {
-            yield return ("Title", TitleId, null);
+            yield return ("Title", TextReference.Sentence(TitleId), null);
         }
     }
 }

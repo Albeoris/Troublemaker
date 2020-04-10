@@ -17,6 +17,7 @@ using Troublemaker.Editor.Framework;
 using Troublemaker.Editor.Settings;
 using Troublemaker.Editor.ViewModels;
 using Troublemaker.Xml;
+using Troublemaker.Xml.Dialogs;
 using Localization = Troublemaker.Xml.Localization;
 
 namespace Troublemaker.Editor.Pages
@@ -28,25 +29,10 @@ namespace Troublemaker.Editor.Pages
         public StageController()
         {
         }
-
-        public IEnumerable<StageViewModel> Stages
-        {
-            get
-            {
-                return LoadStages().ToArray();
-            }
-        }
         
-                    
-        // foreach (var dlgPath in Directory.EnumerateFiles(@"Data/xml/Dialog", "*.xml"))
-        // {
-        //     Dialog dlg = XmlDeserializerFactory.Default.Deserialize<Dialog>(dlgPath);
-        //     dlg.Translate(LocalizationMap.Instance.Tree);
-        // }
-
         private IEnumerable<StageViewModel> LoadStages()
         {
-            ProgressWindow wnd = ProgressWindow.ShowBackground("Stages loading");
+            ProgressWindow wnd = ProgressWindow.ShowBackground("Loading stages...");
             try
             {
                 IEnumerable<XmlMission> missions = DB.Missions.Missions;
@@ -66,7 +52,7 @@ namespace Troublemaker.Editor.Pages
                     }
 
                     Stage stage = XmlDeserializerFactory.Default.Deserialize<Stage>(filePath);
-                    var vm = new StageViewModel(stage);
+                    var vm = new StageViewModel(stage.Map, stage);
 
                     wnd.Increment(1);
                     yield return vm;
@@ -77,12 +63,43 @@ namespace Troublemaker.Editor.Pages
                 wnd.Close();
             }
         }
+        
+        private IEnumerable<StageViewModel> LoadDialogs()
+        {
+            ProgressWindow wnd = ProgressWindow.ShowBackground("Dialogs loading");
+            try
+            {
+                String[] dialogs = Directory.GetFiles(@"Data/xml/Dialog", "*.xml", SearchOption.TopDirectoryOnly);
+                wnd.SetTotal(dialogs.Length);
+                foreach (var dlgPath in dialogs)
+                 {
+                     Dialog dlg = XmlDeserializerFactory.Default.Deserialize<Dialog>(dlgPath);
+                     dlg.Translate(LocalizationMap.Instance.Tree);
 
+                     String fileName = Path.GetFileNameWithoutExtension(dlgPath);
+                     wnd.Increment(1);
+
+                     yield return new StageViewModel(fileName, dlg);
+                 }
+            }
+            finally
+            {
+                wnd.Close();
+            }
+        }
+
+        public static readonly DependencyProperty StagesProperty = DependencyProperty.Register("Stages", typeof(StageViewModel[]), typeof(StageController), new PropertyMetadata(Array.Empty<StageViewModel>()));
         public static readonly DependencyProperty SelectedStageProperty = DependencyProperty.Register("SelectedStage", typeof(StageViewModel), typeof(StageController), new PropertyMetadata(default(StageViewModel)));
         public static readonly DependencyProperty SelectedComponentProperty = DependencyProperty.Register("SelectedComponent", typeof(StageExpandableViewModel), typeof(StageController), new PropertyMetadata(default(StageExpandableViewModel), OnSelectedComponentChanged));
         public static readonly DependencyProperty SelectedMessageProperty = DependencyProperty.Register("SelectedMessage", typeof(StageMessage), typeof(StageController), new PropertyMetadata(default(StageMessage), OnSelectedMessageChanged));
         public static readonly DependencyProperty SelectedSpeakerProperty = DependencyProperty.Register("SelectedSpeaker", typeof(ImageSource), typeof(StageController), new PropertyMetadata(default(ImageSource)));
         public static readonly DependencyProperty SelectedHistoryProperty = DependencyProperty.Register("SelectedHistory", typeof(TranslationHistory), typeof(StageController), new PropertyMetadata(default(TranslationHistory), OnSelectedHistoryChanged));
+
+        public StageViewModel[] Stages
+        {
+            get => (StageViewModel[]) GetValue(StagesProperty);
+            set => SetValue(StagesProperty, value);
+        }
 
         public StageViewModel? SelectedStage
         {
@@ -393,6 +410,21 @@ namespace Troublemaker.Editor.Pages
                         sw.WriteLine(text);
                     }
                 }
+            }
+        }
+
+        public void LoadFiles(String type)
+        {
+            switch (type)
+            {
+                case "Stages":
+                    Stages = LoadStages().ToArray();
+                    break;
+                case "Dialogs":
+                    Stages = LoadDialogs().ToArray();
+                    break;
+                default:
+                    throw new NotSupportedException(type);
             }
         }
     }

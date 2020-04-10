@@ -36,5 +36,13 @@ namespace Troublemaker.Xml
         public static implicit operator TextId(TextReference self) => self.Id;
 
         public override String ToString() => _reference;
+
+        public static TextReference Sentence(String key)
+        {
+            var reference = $"Sentence/{key}/Value";
+            return LocalizationMap.Instance.TryGetValue(reference, out var id)
+                ? new TextReference(reference, id)
+                : default;
+        }
     }
 }

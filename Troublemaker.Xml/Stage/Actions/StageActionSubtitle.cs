@@ -20,10 +20,10 @@ namespace Troublemaker.Xml
         [XPath("Speaker")] public StageSpeaker Speaker;
         [XPath("Unit")] public StagePointObject Unit;
         
-        public IEnumerable<(String name, String key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(Stage stage)
+        public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
         {
             StageSpeakerInfo speaker = new StageSpeakerInfo(Speaker) {Floating = StageActionBalloonType.Wrap(BalloonType)};
-            yield return ("Message", MessageId, speaker);
+            yield return ("Message", TextReference.Sentence(MessageId), speaker);
         }
     }
 }

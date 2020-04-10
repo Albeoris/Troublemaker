@@ -5,9 +5,14 @@ namespace Troublemaker.Xml
     public sealed class StageSpeakerInfo
     {
         public StageSpeakerInfo(StageSpeaker speaker)
+            : this(speaker?.Info, speaker?.Emotion)
         {
-            Name = speaker?.Info;
-            Emotion = speaker?.Emotion;
+        }
+
+        public StageSpeakerInfo(String name, String emotion)
+        {
+            Name = name;
+            Emotion = emotion;
         }
 
         public String Name { get; set; }

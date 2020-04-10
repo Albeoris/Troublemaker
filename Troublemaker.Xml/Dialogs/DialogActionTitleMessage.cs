@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Troublemaker.Xml.Dialogs
 {
     [XPath("self::property[@Type='TitleMessage']")]
-    public sealed class DialogActionTitleMessage : DialogAction
+    public sealed class DialogActionTitleMessage : DialogAction, IMessageHandler
     {
-        [XPath("@Message")] public String Message;
         [XPath("@Title")] public String Title;
+        [XPath("@Message")] public String Message;
         
-        public TextId MessageId { get; private set; }
-        public TextId TitleId { get; private set; }
+        public TextReference TitleId { get; private set; }
+        public TextReference MessageId { get; private set; }
 
         public override void Translate(LocalizationTree tree)
         {
@@ -18,6 +19,12 @@ namespace Troublemaker.Xml.Dialogs
 
             if (tree.TryGet(nameof(Title), out var title))
                 TitleId = title.Value;
+        }
+
+        public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
+        {
+            yield return (nameof(Title), TitleId, null);
+            yield return (nameof(Message), MessageId, null);
         }
     }
 }

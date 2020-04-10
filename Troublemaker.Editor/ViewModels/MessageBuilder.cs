@@ -25,23 +25,21 @@ namespace Troublemaker.Editor.ViewModels
             return child;
         }
 
-        public void AddMessage(IMessageHandler messageHandler, Stage stage)
+        public void AddMessage(IMessageHandler messageHandler, IStage stage)
         {
-            foreach ((String name, String key, StageSpeakerInfo? speakerHandler) in messageHandler.EnumerateMessageKeys(stage))
+            foreach ((String name, TextReference key, StageSpeakerInfo? speakerHandler) in messageHandler.EnumerateMessageKeys(stage))
             {
-                var reference = $"Sentence/{key}/Value";
-                if (!LocalizationMap.Instance.TryGetValue(reference, out var id))
+                if (key == default)
                     continue;
                 
-                var fullName = new TextReference(reference, id);
-                if (!Localize.HasKey(fullName))
+                if (!Localize.HasKey(key))
                     continue;
 
                 String speakerName = String.IsNullOrEmpty(speakerHandler?.Name) ? name : speakerHandler.Name;
                 if (messageHandler is StageActionBalloonChat)
                     speakerName = $"{speakerName} (floating)";
                 
-                _messages.AddLast(new StageMessage(speakerName, fullName) {Speaker = speakerHandler});
+                _messages.AddLast(new StageMessage(speakerName, key) {Speaker = speakerHandler});
             }
         }
 

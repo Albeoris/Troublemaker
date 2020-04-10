@@ -8,9 +8,9 @@ namespace Troublemaker.Xml
     {
         [XPath("@Message")] public String MessageId;
         
-        public IEnumerable<(String name, String key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(Stage stage)
+        public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
         {
-            yield return ("Message", MessageId, null);
+            yield return ("Message", TextReference.Sentence(MessageId), null);
         }
     }
 }

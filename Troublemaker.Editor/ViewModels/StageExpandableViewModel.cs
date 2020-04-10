@@ -8,12 +8,12 @@ namespace Troublemaker.Editor.ViewModels
 {
     public class StageExpandableViewModel
     {
-        private readonly Stage _stage;
+        private readonly IStage _stage;
         private readonly IExpandable _expandable;
 
         public String Name { get; }
 
-        protected StageExpandableViewModel(Stage stage, String name, IExpandable expandable)
+        protected StageExpandableViewModel(IStage stage, String name, IExpandable expandable)
         {
             _stage = stage;
             _expandable = expandable;
@@ -22,7 +22,7 @@ namespace Troublemaker.Editor.ViewModels
             Messages = EnumerateMessagesInternal();
         }
         
-        protected static IEnumerable<StageExpandableViewModel> Wrap(Stage stage, IEnumerable<(String name, IExpandable expandable)> children)
+        protected static IEnumerable<StageExpandableViewModel> Wrap(IStage stage, IEnumerable<(String name, IExpandable expandable)> children)
         {
             foreach (var child in children)
             {

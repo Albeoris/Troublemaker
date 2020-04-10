@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Troublemaker.Xml.Dialogs
 {
     [XPath("self::property[@Type='Selection']")]
-    public sealed class DialogActionSelection : DialogAction
+    public sealed class DialogActionSelection : DialogAction, IMessageHandler
     {
         [XPath("@C_DlgName")] public String DlgName;
         [XPath("@Content")] public String Content;
         [XPath("@C_Price")] public String Price;
         [XPath("@Target")] public String Target;
         
-        [XPath("property")] public DialogSelection[] Selection;
+        [XPath("property")] public DialogSelection[]? Selection;
 
-        public TextId ContentId { get; private set; }
+        public TextReference ContentId { get; private set; }
 
         public override void Translate(LocalizationTree tree)
         {
@@ -27,6 +28,23 @@ namespace Troublemaker.Xml.Dialogs
                 if (tree.TryGet(i, out var child))
                     Selection[i].Translate(child);
             }
+        }
+
+        public override IEnumerable<(String name, IExpandable expandable)> EnumerateChildren()
+        {
+            if (Selection is null)
+                yield break;
+
+            for (var index = 0; index < Selection.Length; index++)
+            {
+                var section = Selection[index];
+                yield return ($"Selection {index}", section);
+            }
+        }
+
+        public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
+        {
+            yield return (nameof(Content), ContentId, null);
         }
     }
 }

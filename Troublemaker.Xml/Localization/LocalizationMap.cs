@@ -6,7 +6,7 @@ namespace Troublemaker.Xml
 {
     public sealed class LocalizationMap
     {
-        private readonly Dictionary<String, TextId> _map;
+        private readonly Dictionary<String, TextReference> _map;
         private readonly Dictionary<TextId, List<String>> _back;
 
         public LocalizationTree Tree { get; } = new LocalizationTree(null);
@@ -17,7 +17,7 @@ namespace Troublemaker.Xml
             doc.Load(keymapPath);
 
             var nodes = doc.SelectNodes("/keymap/entry");
-            _map = new Dictionary<String, TextId>(nodes.Count);
+            _map = new Dictionary<String, TextReference>(nodes.Count);
             _back = new Dictionary<TextId, List<String>>(nodes.Count);
 
             foreach (XmlElement node in nodes)
@@ -27,8 +27,9 @@ namespace Troublemaker.Xml
                 var oldKey = new TextId(type, code);
                 var newKey = node.GetAttribute("key") ?? throw new NotSupportedException(node.OuterXml);
 
-                _map.Add(newKey, oldKey);
-                Tree.Set(newKey, oldKey);
+                TextReference reference = new TextReference(newKey, oldKey);
+                _map.Add(newKey, reference);
+                Tree.Set(newKey, reference);
 
                 if (!_back.TryGetValue(oldKey, out var list))
                 {
@@ -44,7 +45,14 @@ namespace Troublemaker.Xml
 
         public Boolean TryGetValue(String stringKey, out TextId numberKey)
         {
-            return _map.TryGetValue(stringKey, out numberKey);
+            if (_map.TryGetValue(stringKey, out var reference))
+            {
+                numberKey = reference;
+                return true;
+            }
+
+            numberKey = default;
+            return false;
         }
         
         public Boolean TryGetValue(TextId numberKey, out IReadOnlyList<String> stringKey)

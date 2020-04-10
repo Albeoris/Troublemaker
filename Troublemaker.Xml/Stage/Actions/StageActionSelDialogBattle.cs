@@ -22,10 +22,10 @@ namespace Troublemaker.Xml
             yield return DialogChoice.Named(nameof(DialogChoice));
         }
 
-        public IEnumerable<(String name, String key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(Stage stage)
+        public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
         {
             var speaker = new StageSpeakerInfo(Speaker);
-            yield return (nameof(MessageId), MessageId, speaker);
+            yield return (nameof(MessageId), TextReference.Sentence(MessageId), speaker);
         }
     }
 }

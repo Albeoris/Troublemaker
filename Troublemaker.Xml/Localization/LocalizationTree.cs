@@ -9,19 +9,19 @@ namespace Troublemaker.Xml
 
         public String Name { get; }
         
-        private TextId _value;
+        private TextReference _value;
 
         public LocalizationTree(String name)
         {
             Name = name;
         }
 
-        public TextId Value => _value == default ? throw new ArgumentNullException() : _value;
+        public TextReference Value => _value == default ? throw new ArgumentNullException() : _value;
         public LocalizationTree this[String child] => _map[child];
         public Boolean TryGet(String child, out LocalizationTree result) => _map.TryGetValue(child, out result);
         public Boolean TryGet(Int32 childIndex, out LocalizationTree result) => _map.TryGetValue((childIndex + 1).ToString(), out result);
 
-        public void Set(String path, TextId value)
+        public void Set(String path, TextReference value)
         {
             Int32 index = path.IndexOf('/');
             if (index > 0)

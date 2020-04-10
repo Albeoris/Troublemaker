@@ -9,7 +9,7 @@ namespace Troublemaker.Xml
         [XPath("@Info")] public String Info;
         [XPath("@Emotion")] public String Emotion;
         
-        public StageSpeaker Resolve(Stage stage)
+        public StageSpeaker Resolve(IStage stage)
         {
             return this;
         }

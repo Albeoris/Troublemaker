@@ -5,13 +5,87 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Troublemaker.Editor"
         xmlns:pages="clr-namespace:Troublemaker.Editor.Pages"
+        xmlns:viewModels="clr-namespace:Troublemaker.Editor.ViewModels"
+        xmlns:framework="clr-namespace:Troublemaker.Editor.Framework"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Title="Troublemaker - All rights to game resources belong to Dandylion.co.kr" MinWidth="720" MinHeight="480"
-        WindowState="Maximized">
+        WindowState="Maximized" d:DataContext="{d:DesignInstance pages:StageController}">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding GoToNextLanguage}" Gesture="Alt+Right" Modifiers="Alt" Key="Right"/>
+        <KeyBinding Command="{Binding GoToPreviousLanguage}" Gesture="Alt+Left" Modifiers="Alt" Key="Left"/>
+        <KeyBinding Command="{Binding SelectStageList}" Gesture="Alt+1" Modifiers="Alt" Key="D1"/>
+        <KeyBinding Command="{Binding SelectComponentList}" Gesture="Alt+2" Modifiers="Alt" Key="D2"/>
+        <KeyBinding Command="{Binding SelectEditorControl}" Gesture="Alt+3" Modifiers="Alt" Key="D3"/>
+        <KeyBinding Command="{Binding ChangeUserName}" Gesture="F1" Key="F1"/>
+        <KeyBinding Command="{Binding SaveDictionary}" Gesture="F5" Key="F5"/>
+    </Window.InputBindings>
     <Grid>
-        <TabControl>
-            <pages:StageTab Header="Stages"/>
-            <!--<pages:MasteryTab Header="Mastery"/>-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <TabControl Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" SelectionChanged="OnTabControlSelectionChanged">
+            <TabItem Header="Stages"/>
+            <TabItem Header="Dialogs"/>
         </TabControl>
+        
+        <GroupBox Header="Stages" Grid.Column="0" Grid.Row="1" Margin="0,0,3,0">
+            <ListView x:Name="StageList" ItemsSource="{Binding Stages}" SelectedItem="{Binding SelectedStage, Mode=OneWayToSource}">
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="viewModels:StageViewModel">
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </GroupBox>
+        
+        <GridSplitter Grid.Column="0" Grid.Row="1" Width="2" Margin="3,10,3,10" VerticalAlignment="Stretch" HorizontalAlignment="Right" ResizeDirection="Columns"/>
+        
+        <GroupBox Header="Components" Grid.Column="1" Grid.Row="1" Margin="0,0,3,0">
+            <TreeView x:Name="ComponentsTree" ItemsSource="{Binding SelectedStage.EnumerateExpandable}">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <EventSetter Event="RequestBringIntoView" Handler="TreeViewItem_RequestBringIntoView"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <i:Interaction.Behaviors>
+                    <framework:BindableSelectedItemBehavior SelectedItem="{Binding SelectedComponent, Mode=OneWayToSource}" />
+                </i:Interaction.Behaviors>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type viewModels:StageExpandableViewModel}" ItemsSource="{Binding Components}">
+                        <TextBlock Text="{Binding Name}"/>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </GroupBox>
+        
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Width="2" Margin="3,10,3,10" VerticalAlignment="Stretch" HorizontalAlignment="Right" ResizeDirection="Columns"/>
+        
+        <GroupBox Header="Languages" Grid.Column="2" Grid.Row="0">
+            <pages:TranslateLanguages/>
+        </GroupBox>
+        
+        <pages:TranslateControlGroup Grid.Column="2" Grid.Row="1" Group="{Binding SelectedComponent.Messages}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        
+        <GridSplitter Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" Width="2" Margin="3,10,3,10" VerticalAlignment="Stretch" HorizontalAlignment="Right" ResizeDirection="Columns"/>
+        
+        <Grid Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Image Grid.Row="0" Stretch="UniformToFill" Source="{Binding SelectedSpeaker}"/>
+            <GroupBox Grid.Row="1" Header="History">
+                <pages:TranslateHistoryControl/>
+            </GroupBox>
+        </Grid>
     </Grid>
 </Window>

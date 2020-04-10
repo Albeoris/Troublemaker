@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using Troublemaker.Framework;
 
 namespace Troublemaker.Xml.Dialogs
 {
     [XPath("self::class")]
-    public sealed class DialogScript
+    public sealed class DialogScript : IExpandable
     {
         [XPath("@name")] public String Name { get; set; }
 
@@ -18,6 +19,12 @@ namespace Troublemaker.Xml.Dialogs
                 if (tree.TryGet(i, out var child))
                     Actions[i].Translate(child);
             }
+        }
+
+        public String NodeName => Name;
+        public IEnumerable<(String name, IExpandable expandable)> EnumerateChildren()
+        {
+            yield return Actions.Named(nameof(Actions));
         }
     }
 }
