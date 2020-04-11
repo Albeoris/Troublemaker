@@ -11,12 +11,12 @@ namespace Troublemaker.Xml.Dialogs
         
         [XPath("property")] public DialogActionSwitchCase[]? Cases { get; set; }
         
-        public override void Translate(LocalizationTree tree)
+        public override void Translate(LocalizationTree tree, DialogScript script, Dialog dialog)
         {
             for (int i = 0; i < Cases.Length; i++)
             {
                 if (tree.TryGet(i, out var child))
-                    Cases[i].Translate(child);
+                    Cases[i].Translate(child, script, dialog);
             }
         }
         

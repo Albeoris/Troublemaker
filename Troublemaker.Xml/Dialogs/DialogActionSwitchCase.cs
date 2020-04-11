@@ -12,12 +12,12 @@ namespace Troublemaker.Xml.Dialogs
         
         [XPath("property")] public DialogAction[] Actions { get; set; }
 
-        public void Translate(LocalizationTree tree)
+        public void Translate(LocalizationTree tree, DialogScript script, Dialog dialog)
         {
             for (int i = 0; i < Actions.Length; i++)
             {
                 if (tree.TryGet(i, out var child))
-                    Actions[i].Translate(child);
+                    Actions[i].Translate(child, script, dialog);
             }
         }
     }

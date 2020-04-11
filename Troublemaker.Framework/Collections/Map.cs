@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Troublemaker.Framework
 {
@@ -23,6 +24,8 @@ namespace Troublemaker.Framework
             : base(capacity, comparer)
         {
         }
+
+        public  IReadOnlyDictionary<String, T> Pairs => this;
 
         public new IEnumerator<T> GetEnumerator()
         {

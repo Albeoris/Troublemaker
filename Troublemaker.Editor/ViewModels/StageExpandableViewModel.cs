@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Troublemaker.Xml;
 
 namespace Troublemaker.Editor.ViewModels
@@ -51,11 +52,6 @@ namespace Troublemaker.Editor.ViewModels
                     continue;
                 }
 
-                if (expandable.NodeName == "VictoryCondition")
-                {
-                    
-                }
-
                 var builder = builders.Peek();
                 if (builder.Level > level || level - builder.Level > 1)
                     throw new InvalidOperationException("builder.Level > level || level - builder.Level > 1");
@@ -79,10 +75,11 @@ namespace Troublemaker.Editor.ViewModels
             if (result is StageMessageGroup group)
             {
                 group.IsScrollable = ScrollBarVisibility.Visible;
+                group.Foreground = Brushes.Transparent;
                 return @group;
             }
 
-            return new StageMessageGroup(Name, new[] {result}) {IsScrollable = ScrollBarVisibility.Visible};
+            return new StageMessageGroup(Name, new[] {result}) {IsScrollable = ScrollBarVisibility.Visible, Foreground = Brushes.Transparent};
         }
     }
 }

@@ -12,8 +12,12 @@ namespace Troublemaker.Xml.Dialogs
         
         public TextReference[] LineIds { get; private set; } = Array.Empty<TextReference>();
 
-        public override void Translate(LocalizationTree tree)
+        private Dialog _dialog;
+        
+        public override void Translate(LocalizationTree tree, DialogScript dialogScript, Dialog dialog)
         {
+            _dialog = dialog;
+            
             if (!(Lines?.Length > 0))
                 return;
             
@@ -27,10 +31,12 @@ namespace Troublemaker.Xml.Dialogs
 
         public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
         {
+            StageSpeakerInfo? speaker = _dialog.TryResolveNpcName(DlgName);
+            String name = speaker?.Name ?? DlgName;
             for (var index = 0; index < LineIds.Length; index++)
             {
                 TextReference line = LineIds[index];
-                yield return ($"Line {index}", line, null);
+                yield return ($"{name} {index}", line, speaker);
             }
         }
     }

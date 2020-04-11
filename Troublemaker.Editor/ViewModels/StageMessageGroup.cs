@@ -10,6 +10,7 @@ namespace Troublemaker.Editor.ViewModels
         public String Name { get; }
         public IStageMessage[] Messages { get; }
         
+        public Brush Foreground { get; set; } = Brushes.Black;
         public Brush Background { get; set; } = Brushes.Transparent;
         public ScrollBarVisibility IsScrollable { get; set; } = ScrollBarVisibility.Disabled;
         public Boolean IsFocusable => IsScrollable == ScrollBarVisibility.Visible || IsScrollable == ScrollBarVisibility.Auto;

@@ -7,6 +7,7 @@ namespace Troublemaker.Xml
         public StageSpeakerInfo(StageSpeaker speaker)
             : this(speaker?.Info, speaker?.Emotion)
         {
+            ImagePath = speaker?.ImagePath;
         }
 
         public StageSpeakerInfo(String name, String emotion)
@@ -18,5 +19,6 @@ namespace Troublemaker.Xml
         public String Name { get; set; }
         public String Emotion { get; set; }
         public StageActionBalloonType? Floating { get; set; }
+        public String ImagePath { get; set; }
     }
 }

@@ -47,13 +47,10 @@ namespace Troublemaker.Editor
             e.Handled = true;
         }
 
-        private void OnTabControlSelectionChanged(Object sender, SelectionChangedEventArgs e)
+        private void ToggleButton_OnChecked(Object sender, RoutedEventArgs e)
         {
-            if (e.AddedItems.Count != 1)
-                throw new NotSupportedException("if (e.AddedItems.Count != 1)");
-
-            TabItem selectedItem = (TabItem) e.AddedItems[0];
-            StageController.Instance.LoadFiles((String)selectedItem.Header);
+            String name = (String)((RadioButton) sender).Content;
+            StageController.Instance.LoadFiles(name);
         }
     }
 }

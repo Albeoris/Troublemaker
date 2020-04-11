@@ -39,7 +39,7 @@ namespace Troublemaker.Editor.Pages
             if (e.Handled)
                 return;
 
-            if (Group.IsFocusable)
+            if (Group?.IsFocusable == true)
                 return;
 
             e.Handled = true;

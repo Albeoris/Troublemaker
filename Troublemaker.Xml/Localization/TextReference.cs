@@ -35,7 +35,7 @@ namespace Troublemaker.Xml
         public static Boolean operator !=(TextReference left, TextReference right) => !left.Equals(right);
         public static implicit operator TextId(TextReference self) => self.Id;
 
-        public override String ToString() => _reference;
+        public override String ToString() => $"{_reference} ({Id})";
 
         public static TextReference Sentence(String key)
         {

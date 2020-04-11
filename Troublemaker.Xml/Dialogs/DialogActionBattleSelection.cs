@@ -21,7 +21,7 @@ namespace Troublemaker.Xml.Dialogs
         public TextReference MessageId { get; private set; }
         public TextReference[] TextIds { get; private set; } = Array.Empty<TextReference>();
 
-        public override void Translate(LocalizationTree tree)
+        public override void Translate(LocalizationTree tree, DialogScript dialogScript, Dialog dialog)
         {
             if (tree.TryGet(nameof(Message), out var message))
                 MessageId = message.Value;

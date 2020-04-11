@@ -79,7 +79,11 @@ namespace Troublemaker.Editor.Pages
                      String fileName = Path.GetFileNameWithoutExtension(dlgPath);
                      wnd.Increment(1);
 
-                     yield return new StageViewModel(fileName, dlg);
+                     var vm = new StageViewModel(fileName, dlg);
+                     if (vm.EnumerateExpandable.Count > 0)
+                         yield return vm;
+                     else
+                         continue;
                  }
             }
             finally
@@ -209,7 +213,7 @@ namespace Troublemaker.Editor.Pages
             var fullImage = PortraitSet.Instance.FindImage(name, emotion);
             if (fullImage == null)
             {
-                control.SelectedSpeaker = fullImage;
+                control.SelectedSpeaker =  PortraitSet.Instance.FindIcon(name, emotion);;
                 return;
             }
 
@@ -307,15 +311,15 @@ namespace Troublemaker.Editor.Pages
                 switch (_number)
                 {
                     case 0:
-                        if (StageTab.Instance?.StageList?.SelectedItem == null)
+                        if (MainWindow.Instance?.FileList?.SelectedItem == null)
                             return;
-                        element = (ListBoxItem) StageTab.Instance.StageList.ItemContainerGenerator.ContainerFromItem(StageTab.Instance.StageList.SelectedItem);
+                        element = (ListBoxItem) MainWindow.Instance.FileList.ItemContainerGenerator.ContainerFromItem(MainWindow.Instance.FileList.SelectedItem);
                         break;
                     case 1:
-                        element = StageTab.Instance.ComponentsTree;
+                        element = MainWindow.Instance.ComponentsTree;
                         break;
                     case 2:
-                        element = ((StageController) StageTab.Instance.DataContext).SelectedControl;
+                        element = ((StageController) MainWindow.Instance.DataContext).SelectedControl;
                         break;
                     default:
                         throw new NotSupportedException(_number.ToString());

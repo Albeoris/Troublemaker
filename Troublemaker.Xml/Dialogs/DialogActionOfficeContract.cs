@@ -12,7 +12,7 @@ namespace Troublemaker.Xml.Dialogs
 
         public TextReference TitleId { get; private set; }
 
-        public override void Translate(LocalizationTree tree)
+        public override void Translate(LocalizationTree tree, DialogScript dialogScript, Dialog dialog)
         {
             if (tree.TryGet(nameof(Title), out var title))
                 TitleId = title.Value;

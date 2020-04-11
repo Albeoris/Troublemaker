@@ -6,13 +6,17 @@ namespace Troublemaker.Xml.Dialogs
     [XPath("self::property[not(@Type)]")]
     public sealed class DialogActionNative : DialogAction, IMessageHandler
     {
-        [XPath("@C_DlgName")] public String DialogType;
+        [XPath("@C_DlgName")] public String DlgName;
         [XPath("property/@Text")] public String[] FormatLines;
 
         public TextReference[] FormatLineIds { get; private set; } = Array.Empty<TextReference>();
 
-        public override void Translate(LocalizationTree tree)
+        private Dialog _dialog;
+        
+        public override void Translate(LocalizationTree tree, DialogScript dialogScript, Dialog dialog)
         {
+            _dialog = dialog;
+            
             if (!(FormatLines?.Length > 0))
                 return;
             
@@ -26,10 +30,13 @@ namespace Troublemaker.Xml.Dialogs
 
         public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
         {
+            StageSpeakerInfo? speaker = _dialog.TryResolveNpcName(DlgName);
+            String name = speaker?.Name ?? DlgName;
+            
             for (var index = 0; index < FormatLineIds.Length; index++)
             {
                 TextReference line = FormatLineIds[index];
-                yield return ($"Line {index}", line, null);
+                yield return ($"{name} {index}", line, speaker);
             }
         }
     }

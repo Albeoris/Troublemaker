@@ -10,12 +10,21 @@ namespace Troublemaker.Editor.ViewModels
     public class StageViewModel
     {
         public String Name { get; }
-        public IReadOnlyList<StageExpandableCollectionViewModel> EnumerateExpandable { get; }
+        public IReadOnlyList<StageExpandableViewModel> EnumerateExpandable { get; }
 
         public StageViewModel(String name, IStage stage)
         {
             Name = name;
-            EnumerateExpandable = Enumerate(stage).ToArray();
+            EnumerateExpandable = Filter(stage);
+        }
+
+        private static IReadOnlyList<StageExpandableViewModel> Filter(IStage stage)
+        {
+            StageExpandableCollectionViewModel[] result = Enumerate(stage).ToArray();
+
+            return result.Length == 1
+                ? result[0].Components.ToArray()
+                : result;
         }
 
         private static IEnumerable<StageExpandableCollectionViewModel> Enumerate(IStage stage)

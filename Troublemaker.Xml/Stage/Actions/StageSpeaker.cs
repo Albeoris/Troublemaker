@@ -9,6 +9,8 @@ namespace Troublemaker.Xml
         [XPath("@Info")] public String Info;
         [XPath("@Emotion")] public String Emotion;
         
+        public String ImagePath { get; set; }
+
         public StageSpeaker Resolve(IStage stage)
         {
             return this;

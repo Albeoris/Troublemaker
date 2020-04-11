@@ -15,8 +15,12 @@ namespace Troublemaker.Xml.Dialogs
 
         public TextReference ContentId { get; private set; }
 
-        public override void Translate(LocalizationTree tree)
+        private StageSpeakerInfo? _speaker;
+        
+        public override void Translate(LocalizationTree tree, DialogScript dialogScript, Dialog dialog)
         {
+            _speaker = dialog.TryResolveNpcName(DlgName);
+            
             if (tree.TryGet(nameof(Content), out var content))
                 ContentId = content.Value;
 
@@ -44,7 +48,9 @@ namespace Troublemaker.Xml.Dialogs
 
         public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
         {
-            yield return (nameof(Content), ContentId, null);
+            String name = _speaker?.Name ?? DlgName;
+
+            yield return ($"{name}: {nameof(Content)}", ContentId, _speaker);
         }
     }
 }
