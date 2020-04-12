@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -18,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Folding;
 using Troublemaker.Editor.Annotations;
 using Troublemaker.Editor.Framework;
 using Troublemaker.Editor.Settings;
@@ -61,11 +63,15 @@ namespace Troublemaker.Editor.Pages
                 return;
 
             String text = TextBox.Text;
-            Int32 offset = TextBox.TextArea.Caret.Offset;
+            if (text.Length < 1)
+                return;
+            
+            Int32 offset = Math.Min(TextBox.TextArea.Caret.Offset, text.Length - 1);
             Int32 min = offset;
             Int32 max = offset;
             Boolean leftBracket = false;
             Boolean rightBracket = false;
+
             while (min > 0)
             {
                 var ch = text[min - 1];
@@ -78,7 +84,7 @@ namespace Troublemaker.Editor.Pages
                     break;
                 }
             }
-
+            
             while (max < text.Length - 1)
             {
                 var ch = text[max + 1];
@@ -94,7 +100,7 @@ namespace Troublemaker.Editor.Pages
             
             if (min == max)
                 return;
-
+            
             if (rightBracket)
             {
                 TextBox.Document.Replace(max + 1, 1, String.Empty);
@@ -106,6 +112,20 @@ namespace Troublemaker.Editor.Pages
             {
                 TextBox.Document.Replace(min - 1, 1, String.Empty);
                 return;
+            }
+
+            max = offset;
+
+            if (Char.IsLetter(text[max]))
+            {
+                while (max < text.Length - 1)
+                {
+                    var ch = text[max + 1];
+                    if (Char.IsLetter(ch))
+                        max++;
+                    else
+                        break;
+                }
             }
 
             // Open code completion after the user has pressed {:
@@ -125,7 +145,7 @@ namespace Troublemaker.Editor.Pages
             
             TextDocument document = TextBox.TextArea.Document;
             if (document != null)
-                _completionWindow.CompletionList.SelectItem(document.GetText(min, max - min + 1));
+                _completionWindow.CompletionList.SelectItem(document.GetText(min, max - min/* + 1*/));
         }
 
         private void TextBoxOnTextChanged(Object? sender, EventArgs e)
@@ -133,16 +153,44 @@ namespace Troublemaker.Editor.Pages
             if (_history != null)
                 _history.CurrentText = TextBox.Text;
             SaveClick.RaiseCanExecuteChanged();
+            UpdateFolding();
+        }
+
+        private static readonly Regex FoldingRegex = new Regex(@"(\[[^]]+\]+)+", RegexOptions.Compiled);
+        
+        private FoldingManager _foldingManager;
+
+        private void UpdateFolding()
+        {
+            MatchCollection matches = FoldingRegex.Matches(_history.CurrentText);
+            if (_foldingManager is null)
+            {
+                if (matches.Count > 0)
+                    _foldingManager = FoldingManager.Install(TextBox.TextArea);
+                else
+                    return;
+            }
+
+            List<NewFolding> result = new List<NewFolding>(matches.Count);
+            foreach (Match m in matches)
+            {
+                var folding = new NewFolding
+                {
+                    Name = "Tags",
+                    DefaultClosed = true,
+                    StartOffset = m.Index,
+                    EndOffset = m.Index + m.Length
+                };
+                result.Add(folding);
+            }
+
+            _foldingManager.UpdateFoldings(result, -1);
         }
 
         private CompletionWindow _completionWindow;
 
         private void TextAreaOnTextEntered(Object sender, TextCompositionEventArgs e)
         {
-            if (e.Text == Environment.NewLine)
-            {
-            }
-            
             if (e.Text == "{") {
                 // Open code completion after the user has pressed {:
                 _completionWindow = new CompletionWindow(TextBox.TextArea);
@@ -163,7 +211,7 @@ namespace Troublemaker.Editor.Pages
         {
             _completionWindow = null;
         }
-
+        
         private void TextAreaOnTextEntering(Object sender, TextCompositionEventArgs e)
         {
             if (e.Text.Length < 1)
@@ -232,7 +280,11 @@ namespace Troublemaker.Editor.Pages
             StageSpeakerInfo? speaker = message.Speaker;
             if (speaker != null)
             {
-                control.SpeakerBackground = PortraitSet.Instance.FindIcon(speaker.Name, speaker.Emotion);
+                ImageSource? background = PortraitSet.Instance.FindIcon(speaker.Name, speaker.Emotion);
+                if (background is null && !String.IsNullOrEmpty(speaker.ImagePath))
+                    background = ImageSets.FindImageSource(speaker.ImagePath);
+                
+                control.SpeakerBackground = background;
                 StageActionBalloonType? floating = speaker.Floating;
                 if (floating != null)
                 {
@@ -304,7 +356,7 @@ namespace Troublemaker.Editor.Pages
             SaveClick.RaiseCanExecuteChanged();
         }
 
-        public static readonly DependencyProperty SpeakerBackgroundProperty = DependencyProperty.Register("SpeakerBackground", typeof(ImageSource), typeof(StageTab), new PropertyMetadata(default(ImageSource)));
+        public static readonly DependencyProperty SpeakerBackgroundProperty = DependencyProperty.Register("SpeakerBackground", typeof(ImageSource), typeof(TranslateControl), new PropertyMetadata(default(ImageSource)));
         public static readonly DependencyProperty SpeakerForegroundProperty = DependencyProperty.Register("SpeakerForeground", typeof(Geometry), typeof(TranslateControl), new PropertyMetadata(GeometryRenderer.NormalBalloon));
         public static readonly DependencyProperty SpeakerForegroundColorProperty = DependencyProperty.Register("SpeakerForegroundColor", typeof(Color), typeof(TranslateControl), new PropertyMetadata(Colors.White));
 

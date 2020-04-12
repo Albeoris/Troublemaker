@@ -5,10 +5,10 @@ namespace Troublemaker.Editor.ViewModels
 {
     public sealed class StageExpandableCollectionViewModel : StageExpandableViewModel
     {
-        private readonly Stage _stage;
+        private readonly IStage _stage;
         private readonly ExpandableCollection _expandables;
 
-        public StageExpandableCollectionViewModel(Stage stage, ExpandableCollection expandables)
+        public StageExpandableCollectionViewModel(IStage stage, ExpandableCollection expandables)
             :base(stage, expandables.NodeName, expandables)
         {
             _stage = stage;

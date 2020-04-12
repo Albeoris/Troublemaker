@@ -6,7 +6,7 @@ using Troublemaker.Framework;
 namespace Troublemaker.Xml
 {
     [XPath("self::stage")]
-    public sealed class Stage : IExpandable
+    public sealed class Stage : IExpandable, IStage
     {
         [XPath("@initialize")] public String Initialize;
         [XPath("@map")] public String Map;
@@ -32,6 +32,17 @@ namespace Troublemaker.Xml
             yield return Objectives.Named(nameof(Objectives));
             yield return Triggers.Named(nameof(Triggers));
             yield return MissionDirects.Named(nameof(MissionDirects));
+        }
+
+        public Boolean TryResolveMapComponent(String objectId, out StageMapComponent mapComponent)
+        {
+            if (MapComponents is null)
+            {
+                mapComponent = default;
+                return false;
+            }
+            
+            return MapComponents.TryGetValue(objectId, out mapComponent);
         }
     }
 }

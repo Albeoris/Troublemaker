@@ -9,7 +9,7 @@
              xmlns:viewModels="clr-namespace:Troublemaker.Editor.ViewModels"
              mc:Ignorable="d" 
              MinHeight="80" MinWidth="100" d:DesignWidth="300" HorizontalAlignment="Stretch">
-    <GroupBox Header="{framework:Ancestor Group.Name, UserControl}" Focusable="False">
+    <GroupBox Header="{framework:Ancestor Group.Name, UserControl}" Focusable="False" BorderBrush="{framework:Ancestor Group.Foreground, UserControl}">
         <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="{framework:Ancestor Group.IsScrollable, UserControl}"
                       PreviewMouseWheel="OnPreviewMouseWheel">

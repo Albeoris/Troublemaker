@@ -14,13 +14,13 @@ namespace Troublemaker.Xml
 
         [XPath("Unit")] public StagePoint Unit;
         
-        public IEnumerable<(String name, String key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(Stage stage)
+        public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
         {
             StageActionBalloonType balloonType = StageActionBalloonType.Wrap(BalloonType);
             StageSpeakerObject speakerObj = new StageSpeakerObject(Unit);
             StageSpeaker speaker = speakerObj.Resolve(stage);
             StageSpeakerInfo speakerInfo = new StageSpeakerInfo(speaker) {Floating = balloonType};
-            yield return ("Message", MessageId, speakerInfo);
+            yield return ("Message", TextReference.Sentence(MessageId), speakerInfo);
         }
     }
 }

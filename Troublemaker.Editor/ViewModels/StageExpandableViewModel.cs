@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Troublemaker.Xml;
 
 namespace Troublemaker.Editor.ViewModels
 {
     public class StageExpandableViewModel
     {
-        private readonly Stage _stage;
+        private readonly IStage _stage;
         private readonly IExpandable _expandable;
 
         public String Name { get; }
 
-        protected StageExpandableViewModel(Stage stage, String name, IExpandable expandable)
+        protected StageExpandableViewModel(IStage stage, String name, IExpandable expandable)
         {
             _stage = stage;
             _expandable = expandable;
@@ -22,7 +23,7 @@ namespace Troublemaker.Editor.ViewModels
             Messages = EnumerateMessagesInternal();
         }
         
-        protected static IEnumerable<StageExpandableViewModel> Wrap(Stage stage, IEnumerable<(String name, IExpandable expandable)> children)
+        protected static IEnumerable<StageExpandableViewModel> Wrap(IStage stage, IEnumerable<(String name, IExpandable expandable)> children)
         {
             foreach (var child in children)
             {
@@ -51,11 +52,6 @@ namespace Troublemaker.Editor.ViewModels
                     continue;
                 }
 
-                if (expandable.NodeName == "VictoryCondition")
-                {
-                    
-                }
-
                 var builder = builders.Peek();
                 if (builder.Level > level || level - builder.Level > 1)
                     throw new InvalidOperationException("builder.Level > level || level - builder.Level > 1");
@@ -79,10 +75,11 @@ namespace Troublemaker.Editor.ViewModels
             if (result is StageMessageGroup group)
             {
                 group.IsScrollable = ScrollBarVisibility.Visible;
+                group.Foreground = Brushes.Transparent;
                 return @group;
             }
 
-            return new StageMessageGroup(Name, new[] {result}) {IsScrollable = ScrollBarVisibility.Visible};
+            return new StageMessageGroup(Name, new[] {result}) {IsScrollable = ScrollBarVisibility.Visible, Foreground = Brushes.Transparent};
         }
     }
 }

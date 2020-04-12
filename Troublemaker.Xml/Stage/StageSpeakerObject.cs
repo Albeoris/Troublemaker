@@ -9,12 +9,13 @@
             _unit = unit;
         }
 
-        public StageSpeaker Resolve(Stage stage)
+        public StageSpeaker Resolve(IStage stage)
         {
             if (!(_unit is StagePointObject obj))
                 return null;
 
-            if (stage.MapComponents.TryGetValue(obj.ObjectKey, out var component) && component is IStageMapUnit unit)
+            
+            if (stage.TryResolveMapComponent(obj.ObjectKey, out StageMapComponent component) && component is IStageMapUnit unit)
             {
                 XmlMonster xmlMonster = DB.Monsters[unit.MonsterName];
                 return new StageSpeaker {Info = xmlMonster.InfoName};

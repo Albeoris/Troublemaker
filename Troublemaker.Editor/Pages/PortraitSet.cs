@@ -20,41 +20,15 @@ namespace Troublemaker.Editor.Pages
 
             foreach (var obj in objects.Items)
             {
-                Portraits portraits = new Portraits(GetPortertSource(obj.Image), GetPortertSource(obj.Image_Small));
+                Portraits portraits = new Portraits(ImageSets.FindImageSource(obj.Image), ImageSets.FindImageSource(obj.Image_Small));
                 _dic.Add(obj.Name, portraits);
 
                 foreach (var emotion in obj.Emotions)
                 {
-                    Emotion em = new Emotion(GetPortertSource(emotion.Image), GetPortertSource(emotion.Icon));
+                    Emotion em = new Emotion(ImageSets.FindImageSource(emotion.Image), ImageSets.FindImageSource(emotion.Icon));
                     portraits.Emotions.Add(emotion.Name, em);
                 }
             }
-        }
-
-        private BitmapSource? GetPortertSource(String imageName)
-        {
-            if (String.IsNullOrEmpty(imageName) || imageName == "None")
-                return null;
-
-            String[] parts = imageName.Split('/');
-            if (parts.Length == 2)
-            {
-                String setName = parts[0];
-                String portraitName = parts[1];
-
-                return ImageSets.Instance.Get(setName)[portraitName];
-            }
-            
-            if (parts.Length == 1)
-            {
-                var path = ImagePaths.FindPath(parts[0]);
-                if (path == null)
-                    return null;
-
-                return new BitmapImage(new Uri(path, UriKind.Absolute));
-            }
-
-            throw new NotSupportedException(imageName);
         }
 
         public BitmapSource? FindImage(String objectName, String emotionName)

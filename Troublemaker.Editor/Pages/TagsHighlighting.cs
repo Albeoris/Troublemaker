@@ -25,20 +25,35 @@ namespace Troublemaker.Editor.Pages
 
         public TagsHighlighting(TranslationTags tags)
         {
+            var syntaxDefinition = MakeSyntaxDefinition(tags);
+            Highlighting = HighlightingLoader.Load(syntaxDefinition, HighlightingManager.Instance);
+
+            var completionData = MakeCompletionData(tags);
+            CompletionData = completionData;
+        }
+
+        private static XshdSyntaxDefinition MakeSyntaxDefinition(TranslationTags tags)
+        {
             XshdSyntaxDefinition syntaxDefinition = new XshdSyntaxDefinition();
             XshdRuleSet ruleSet = new XshdRuleSet();
 
             var span = MakeBrackets(tags);
             ruleSet.Elements.Add(span);
+            
+            var colors = MakeColors();
+            ruleSet.Elements.Add(colors);
+            
+            var nativeTags = MakeNativeTags();
+            ruleSet.Elements.Add(nativeTags);
+            
+            var nativeComments = MakeNativeComments();
+            ruleSet.Elements.Add(nativeComments);
 
             var keywords = MakeKeywords(tags);
             ruleSet.Elements.Add(keywords);
 
             syntaxDefinition.Elements.Add(ruleSet);
-            Highlighting = HighlightingLoader.Load(syntaxDefinition, HighlightingManager.Instance);
-
-            var completionData = MakeCompletionData(tags);
-            CompletionData = completionData;
+            return syntaxDefinition;
         }
 
         private IReadOnlyList<ICompletionData> MakeCompletionData(TranslationTags tags)
@@ -62,6 +77,68 @@ namespace Troublemaker.Editor.Pages
             foreach (String tag in tags.All)
                 keywords.Words.Add(tag);
             return keywords;
+        }
+        
+        private static XshdSpan MakeNativeTags()
+        {
+            XshdSpan span = new XshdSpan
+            {
+                BeginRegex = @"\$", EndRegex = @"\$",
+                SpanColorReference = new XshdReference<XshdColor>(new XshdColor
+                {
+                    Foreground = new SimpleHighlightingBrush(Colors.RoyalBlue)
+                }),
+            };
+            return span;
+        }
+        
+        private static XshdSpan MakeNativeComments()
+        {
+            XshdSpan span = new XshdSpan
+            {
+                BeginRegex = @"\[", EndRegex = @"\]",
+                SpanColorReference = new XshdReference<XshdColor>(new XshdColor
+                {
+                    Foreground = new SimpleHighlightingBrush(Colors.RoyalBlue)
+                }),
+            };
+            return span;
+        }
+        
+        private static XshdSpan MakeColors()
+        {
+            XshdSpan span = new XshdSpan
+            {
+                BeginRegex = @"\[colour='", EndRegex = @"'\]",
+                SpanColorReference = new XshdReference<XshdColor>(new XshdColor
+                {
+                    Foreground = new SimpleHighlightingBrush(Colors.RoyalBlue)
+                }),
+                RuleSetReference = MakeColorKeywords()
+            };
+            return span;
+        }
+        
+        private static XshdReference<XshdRuleSet> MakeColorKeywords()
+        {
+            XshdRuleSet ruleSet = new XshdRuleSet();
+            var background = new SimpleHighlightingBrush(Colors.DimGray);
+
+            foreach ((String name, Color color) in GameColors.KnownColors.Pairs)
+            {
+                XshdRule unknownRule = new XshdRule
+                {
+                    Regex = name,
+                    ColorReference = new XshdReference<XshdColor>(new XshdColor()
+                    {
+                        Foreground = new SimpleHighlightingBrush(color),
+                        Background = background
+                    })
+                };
+                ruleSet.Elements.Add(unknownRule);
+            }
+
+            return new XshdReference<XshdRuleSet>(ruleSet);
         }
 
         private static XshdSpan MakeBrackets(TranslationTags tags)
@@ -133,7 +210,7 @@ namespace Troublemaker.Editor.Pages
                     case '5':  return $"Здесь 5 {value}.";
                 }
 
-                return $"Привет, {value}";
+                return value;
             }
 
             public ImageSource Image { get; }

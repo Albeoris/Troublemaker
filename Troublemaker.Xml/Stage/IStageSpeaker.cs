@@ -2,6 +2,6 @@
 {
     public interface IStageSpeaker
     {
-        public StageSpeaker Resolve(Stage stage);
+        public StageSpeaker Resolve(IStage stage);
     }
 }

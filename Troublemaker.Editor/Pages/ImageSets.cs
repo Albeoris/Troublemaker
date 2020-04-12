@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Media.Imaging;
+using Troublemaker.Xml;
 
 namespace Troublemaker.Editor.Pages
 {
@@ -19,6 +21,32 @@ namespace Troublemaker.Editor.Pages
             }
 
             return imageSet;
+        }
+        
+        public static BitmapSource? FindImageSource(String imageName)
+        {
+            if (String.IsNullOrEmpty(imageName) || imageName == "None")
+                return null;
+
+            String[] parts = imageName.Split('/');
+            if (parts.Length == 2)
+            {
+                String setName = parts[0];
+                String portraitName = parts[1];
+
+                return ImageSets.Instance.Get(setName)[portraitName];
+            }
+            
+            if (parts.Length == 1)
+            {
+                var path = ImagePaths.FindPath(parts[0]);
+                if (path == null)
+                    return null;
+
+                return new BitmapImage(new Uri(path, UriKind.Absolute));
+            }
+
+            throw new NotSupportedException(imageName);
         }
     }
 }

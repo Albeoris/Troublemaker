@@ -1,23 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Troublemaker.Xml.Dialogs
 {
     [XPath("self::property[@Type='MessageBox']")]
-    public sealed class DialogActionMessageBox : DialogAction
+    public sealed class DialogActionMessageBox : DialogAction, IMessageHandler
     {
-        [XPath("@Message")] public String Message;
         [XPath("@Title")] public String Title;
+        [XPath("@Message")] public String Message;
         
-        public TextId MessageId { get; private set; }
-        public TextId TitleId { get; private set; }
+        public TextReference TitleId { get; private set; }
+        public TextReference MessageId { get; private set; }
 
-        public override void Translate(LocalizationTree tree)
+        public override void Translate(LocalizationTree tree, DialogScript dialogScript, Dialog dialog)
         {
             if (tree.TryGet(nameof(Message), out var message))
                 MessageId = message.Value;
 
             if (tree.TryGet(nameof(Title), out var title))
                 TitleId = title.Value;
+        }
+        
+        public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
+        {
+            yield return (nameof(Title), TitleId, null);
+            yield return (nameof(Message), MessageId, null);
         }
     }
 }

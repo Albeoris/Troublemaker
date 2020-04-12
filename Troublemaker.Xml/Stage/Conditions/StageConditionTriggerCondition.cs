@@ -19,9 +19,9 @@ namespace Troublemaker.Xml
             yield return SuccessCondition.Named(nameof(SuccessCondition));
         }
         
-        public IEnumerable<(String name, String key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(Stage stage)
+        public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
         {
-            yield return ("Title", TitleId, null);
+            yield return ("Title", TextReference.Sentence(TitleId), null);
         }
     }
 }

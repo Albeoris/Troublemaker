@@ -12,7 +12,7 @@ The program was not tested in real conditions, you can lose all your data. Make 
 
 **Download:**
 
-https://yadi.sk/d/R8-P8qaDCzpTBA
+https://yadi.sk/d/S91D1IVgIA8WOw
 
 
 
@@ -43,6 +43,7 @@ All translation data is stored in the Translation_???.zip archive in the program
 
 **History:**
 
+`v2020.04.12` - dialogs, highlighting and folding tags, bug fixes
 `v2020.04.07` - initial version
 
 
@@ -50,3 +51,4 @@ All translation data is stored in the Translation_???.zip archive in the program
 **Screenshots:**
 
 ![Screenshot](https://i.imgur.com/E23qrt4.png)
+![Screenshot](https://i.imgur.com/GYx2EwV.png)

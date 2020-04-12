@@ -16,11 +16,11 @@ namespace Troublemaker.Xml
 
         [XPath("Speaker")] public StageSpeaker Speaker;
         
-        public IEnumerable<(String name, String key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(Stage stage)
+        public IEnumerable<(String name, TextReference key, StageSpeakerInfo? speaker)> EnumerateMessageKeys(IStage stage)
         {
             var speaker = new StageSpeakerInfo(Speaker);
-            yield return ("Title", TitleId, speaker);
-            yield return ("Message", MessageId, speaker);
+            yield return ("Title", TextReference.Sentence(TitleId), speaker);
+            yield return ("Message", TextReference.Sentence(MessageId), speaker);
         }
     }
 }

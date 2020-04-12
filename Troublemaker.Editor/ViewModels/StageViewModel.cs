@@ -9,31 +9,37 @@ namespace Troublemaker.Editor.ViewModels
 {
     public class StageViewModel
     {
-        private readonly Stage _stage;
+        public String Name { get; }
+        public IReadOnlyList<StageExpandableViewModel> EnumerateExpandable { get; }
 
-        public StageViewModel(Stage stage)
+        public StageViewModel(String name, IStage stage)
         {
-            _stage = stage;
+            Name = name;
+            EnumerateExpandable = Filter(stage);
         }
 
-        public String Name => _stage.Map;
-
-        public IEnumerable<StageExpandableCollectionViewModel> EnumerateExpandable
+        private static IReadOnlyList<StageExpandableViewModel> Filter(IStage stage)
         {
-            get
+            StageExpandableCollectionViewModel[] result = Enumerate(stage).ToArray();
+
+            return result.Length == 1
+                ? result[0].Components.ToArray()
+                : result;
+        }
+
+        private static IEnumerable<StageExpandableCollectionViewModel> Enumerate(IStage stage)
+        {
+            foreach ((string name, IExpandable expandable) in stage.EnumerateChildren())
             {
-                foreach ((string name, IExpandable expandable) in _stage.EnumerateChildren())
+                if (expandable is ExpandableCollection collection)
                 {
-                    if (expandable is ExpandableCollection collection)
-                    {
-                        var vm = new StageExpandableCollectionViewModel(_stage, collection);
-                        if (vm.Messages != null || vm.Components.Any())
-                            yield return vm;
-                    }
-                    else
-                    {
-                        throw new NotSupportedException(expandable.GetType().FullName);
-                    }
+                    var vm = new StageExpandableCollectionViewModel(stage, collection);
+                    if (vm.Messages != null || vm.Components.Any())
+                        yield return vm;
+                }
+                else
+                {
+                    throw new NotSupportedException(expandable.GetType().FullName);
                 }
             }
         }

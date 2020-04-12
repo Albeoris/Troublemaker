@@ -32,8 +32,4 @@
 	<Resource Include="Framework\Shaders\GrayscaleEffect.fx" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Dialogs" />
-  </ItemGroup>
-
 </Project>
