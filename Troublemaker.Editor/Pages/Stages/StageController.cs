@@ -356,7 +356,7 @@ namespace Troublemaker.Editor.Pages
 
                 SaveDictionaryMode mode = SaveDictionaryMode.Latest;
 
-                String language = Instance.SelectedHistory.Language;
+                String language = TranslateLanguages.Instance.CurrentLanguage;
                 TranslationFile translationFile = TranslationFile.Get(language);
                 Localization dic = Localize.GetDic(language);
 
