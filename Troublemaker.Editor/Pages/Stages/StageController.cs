@@ -29,7 +29,7 @@ namespace Troublemaker.Editor.Pages
         public StageController()
         {
         }
-        
+
         private IEnumerable<StageViewModel> LoadStages()
         {
             ProgressWindow wnd = ProgressWindow.ShowBackground("Loading stages...");
@@ -63,7 +63,7 @@ namespace Troublemaker.Editor.Pages
                 wnd.Close();
             }
         }
-        
+
         private IEnumerable<StageViewModel> LoadDialogs()
         {
             ProgressWindow wnd = ProgressWindow.ShowBackground("Dialogs loading");
@@ -72,19 +72,19 @@ namespace Troublemaker.Editor.Pages
                 String[] dialogs = Directory.GetFiles(@"Data/xml/Dialog", "*.xml", SearchOption.TopDirectoryOnly);
                 wnd.SetTotal(dialogs.Length);
                 foreach (var dlgPath in dialogs)
-                 {
-                     Dialog dlg = XmlDeserializerFactory.Default.Deserialize<Dialog>(dlgPath);
-                     dlg.Translate(LocalizationMap.Instance.Tree);
+                {
+                    Dialog dlg = XmlDeserializerFactory.Default.Deserialize<Dialog>(dlgPath);
+                    dlg.Translate(LocalizationMap.Instance.Tree);
 
-                     String fileName = Path.GetFileNameWithoutExtension(dlgPath);
-                     wnd.Increment(1);
+                    String fileName = Path.GetFileNameWithoutExtension(dlgPath);
+                    wnd.Increment(1);
 
-                     var vm = new StageViewModel(fileName, dlg);
-                     if (vm.EnumerateExpandable.Count > 0)
-                         yield return vm;
-                     else
-                         continue;
-                 }
+                    var vm = new StageViewModel(fileName, dlg);
+                    if (vm.EnumerateExpandable.Count > 0)
+                        yield return vm;
+                    else
+                        continue;
+                }
             }
             finally
             {
@@ -213,7 +213,8 @@ namespace Troublemaker.Editor.Pages
             var fullImage = PortraitSet.Instance.FindImage(name, emotion);
             if (fullImage == null)
             {
-                control.SelectedSpeaker =  PortraitSet.Instance.FindIcon(name, emotion);;
+                control.SelectedSpeaker = PortraitSet.Instance.FindIcon(name, emotion);
+                ;
                 return;
             }
 
@@ -289,6 +290,79 @@ namespace Troublemaker.Editor.Pages
             public event EventHandler CanExecuteChanged;
         }
 
+        public ICommand GoToNextLine { get; } = new GoToNextLineCommand();
+        public ICommand GoToPreviousLine { get; } = new GoToPreviousLineCommand();
+
+        private sealed class GoToNextLineCommand : ICommand
+        {
+            public GoToNextLineCommand()
+            {
+            }
+
+            public Boolean CanExecute(Object parameter)
+            {
+                return true;
+            }
+
+            public void Execute(Object parameter)
+            {
+                TextEditor ctrl = StageController.Instance.SelectedControl;
+                if (ctrl == null)
+                    return;
+
+                Boolean found = false;
+                foreach (var item in MainWindow.Instance.TranslationControl.FindVisualChildren<TranslateControl>())
+                {
+                    if (found)
+                    {
+                        item.TextBox.Focus();
+                        return;
+                    }
+
+                    if (item.TextBox == ctrl)
+                    {
+                        found = true;
+                    }
+                }
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
+
+        private sealed class GoToPreviousLineCommand : ICommand
+        {
+            public GoToPreviousLineCommand()
+            {
+            }
+
+            public Boolean CanExecute(Object parameter)
+            {
+                return true;
+            }
+
+            public void Execute(Object parameter)
+            {
+                TextEditor ctrl = Instance.SelectedControl;
+                if (ctrl == null)
+                    return;
+
+                TranslateControl? previous = null;
+                foreach (var item in MainWindow.Instance.TranslationControl.FindVisualChildren<TranslateControl>())
+                {
+                    if (item.TextBox == ctrl)
+                    {
+                        if (previous != null)
+                            previous.TextBox.Focus();
+                        return;
+                    }
+
+                    previous = item;
+                }
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
+
         public ICommand SelectStageList { get; } = new GoToComponentCommand(0);
         public ICommand SelectComponentList { get; } = new GoToComponentCommand(1);
         public ICommand SelectEditorControl { get; } = new GoToComponentCommand(2);
@@ -338,7 +412,7 @@ namespace Troublemaker.Editor.Pages
                 wnd.ShowDialog();
             }
         }
-        
+
         private class SaveDictionaryCommand : BaseCommand
         {
             public override void Execute(Object parameter)
@@ -348,7 +422,7 @@ namespace Troublemaker.Editor.Pages
                     FileName = "dic_text.dic",
                     Filter = "Troubleshooter (*.dic)|*.dic"
                 };
-                
+
                 if (dlg.ShowDialog() != true)
                     return;
 
@@ -363,7 +437,7 @@ namespace Troublemaker.Editor.Pages
                 Regex tags = new Regex(@"\{([^}]+?)\}", RegexOptions.Compiled);
 
                 var result = new Dictionary<TextId, (String comment, String text)>();
-                foreach (LocalizeString str in dic.Enumerate().OrderBy(s=>s.Key))
+                foreach (LocalizeString str in dic.Enumerate().OrderBy(s => s.Key))
                 {
                     if (str.Key.Type != "Text")
                         continue;
@@ -379,7 +453,7 @@ namespace Troublemaker.Editor.Pages
                         if (mode == SaveDictionaryMode.Latest || latest.Approved != default)
                             text = latest.Text;
                     }
-                    
+
                     var m = tags.Match(text);
                     while (m.Success)
                     {
@@ -390,7 +464,7 @@ namespace Troublemaker.Editor.Pages
                         {
                             text = text.Replace(word, rep);
                         }
-                        
+
                         m = m.NextMatch();
                     }
 
@@ -407,10 +481,10 @@ namespace Troublemaker.Editor.Pages
 
                         sw.Write(key);
                         sw.Write('\t');
-                        
+
                         sw.Write(comment);
                         sw.Write('\t');
-                        
+
                         sw.WriteLine(text);
                     }
                 }
