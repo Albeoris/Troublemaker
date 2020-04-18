@@ -362,6 +362,31 @@ namespace Troublemaker.Editor.Pages
 
             public event EventHandler CanExecuteChanged;
         }
+        
+        public ICommand SaveAll { get; } = new SaveAllCommand();
+
+        private sealed class SaveAllCommand : ICommand
+        {
+            public SaveAllCommand()
+            {
+            }
+
+            public Boolean CanExecute(Object parameter)
+            {
+                return true;
+            }
+
+            public void Execute(Object parameter)
+            {
+                foreach (var item in MainWindow.Instance.TranslationControl.FindVisualChildren<TranslateControl>())
+                {
+                    if (item.SaveClick.CanExecute(null))
+                        item.SaveClick.Execute(null);
+                }
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
 
         public ICommand SelectStageList { get; } = new GoToComponentCommand(0);
         public ICommand SelectComponentList { get; } = new GoToComponentCommand(1);

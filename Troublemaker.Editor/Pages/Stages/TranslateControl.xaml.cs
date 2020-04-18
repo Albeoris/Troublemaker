@@ -45,6 +45,15 @@ namespace Troublemaker.Editor.Pages
             TextBox.TextArea.TextEntering += TextAreaOnTextEntering;
             TextBox.TextArea.TextEntered += TextAreaOnTextEntered;
             TextBox.KeyUp += TextBoxOnKeyUp;
+            TextBox.PreviewMouseDoubleClick += TextBoxOnPreviewMouseDoubleClick;
+        }
+
+        private void TextBoxOnPreviewMouseDoubleClick(Object sender, MouseButtonEventArgs e)
+        {
+            if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+            {
+                AutoComplete();
+            }
         }
 
         private void TextBoxOnKeyUp(Object sender, KeyEventArgs e)
@@ -61,7 +70,7 @@ namespace Troublemaker.Editor.Pages
 
             if ((e.KeyboardDevice.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
             {
-                OnAltEnter();
+                AutoComplete();
             }
             else if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
@@ -75,7 +84,7 @@ namespace Troublemaker.Editor.Pages
                 SaveClick.Execute(null);
         }
 
-        private void OnAltEnter()
+        private void AutoComplete()
         {
             String text = TextBox.Text;
             if (text.Length < 1)

@@ -19,6 +19,7 @@
         <KeyBinding Command="{Binding GoToPreviousLine}" Gesture="Alt+Up" Modifiers="Alt" Key="Up"/>
         <KeyBinding Command="{Binding GoToNextLine}" Gesture="Alt+Down" Modifiers="Alt" Key="Down"/>
         <KeyBinding Command="{Binding SelectEditorControl}" Gesture="Alt+3" Modifiers="Alt" Key="D3"/>
+        <KeyBinding Command="{Binding SaveAll}" Gesture="Ctrl+Shift+S" Modifiers="Control+Shift" Key="S"/>
         <KeyBinding Command="{Binding ChangeUserName}" Gesture="F1" Key="F1"/>
         <KeyBinding Command="{Binding SaveDictionary}" Gesture="F5" Key="F5"/>
     </Window.InputBindings>
