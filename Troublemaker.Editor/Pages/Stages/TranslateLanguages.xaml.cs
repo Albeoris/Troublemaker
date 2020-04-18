@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Troublemaker.Editor.Framework;
 using Troublemaker.Xml;
 using Path = System.IO.Path;
 
@@ -88,7 +89,7 @@ namespace Troublemaker.Editor.Pages
 
         public IEnumerable<RadioButton> EnumerateRadioButtons()
         {
-            return FindVisualChildren<RadioButton>(LanguageButtons);
+            return LanguageButtons.FindVisualChildren<RadioButton>();
         }
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
@@ -96,25 +97,6 @@ namespace Troublemaker.Editor.Pages
             RadioButton button = (RadioButton) sender;
             String language = (String) button.Content;
             CurrentLanguage = language;
-        }
-
-        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
-        {
-            if (depObj == null) yield break;
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-            {
-                DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-                if (child != null && child is T)
-                {
-                    yield return (T) child;
-                }
-
-                foreach (T childOfChild in FindVisualChildren<T>(child))
-                {
-                    yield return childOfChild;
-                }
-            }
         }
     }
 }

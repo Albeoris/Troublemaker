@@ -13,7 +13,8 @@
         <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="{framework:Ancestor Group.IsScrollable, UserControl}"
                       PreviewMouseWheel="OnPreviewMouseWheel">
-            <ItemsControl ItemsSource="{framework:Ancestor Group.Messages, UserControl}"
+            <ItemsControl x:Name="List"
+                          ItemsSource="{framework:Ancestor Group.Messages, UserControl}"
                           Background="{framework:Ancestor Group.Background, UserControl}"
                           Focusable="{framework:Ancestor Group.IsFocusable, UserControl}">
                 <ItemsControl.ItemsPanel>

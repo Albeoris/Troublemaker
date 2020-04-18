@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.IO;
-using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using System.Xml;
+using Troublemaker.Editor.Pages;
 using Troublemaker.Editor.Settings;
-using Troublemaker.Xml;
 using Troublemaker.Xml.Dialogs;
+using Localization = ICSharpCode.AvalonEdit.Search.Localization;
 
 namespace Troublemaker.Editor
 {

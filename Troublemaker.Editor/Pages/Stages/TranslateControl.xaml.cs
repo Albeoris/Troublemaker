@@ -40,11 +40,20 @@ namespace Troublemaker.Editor.Pages
 
             Loaded += TranslateControl_Loaded;
             Unloaded += TranslateControl_Unloaded;
-            
+
             TextBox.TextChanged += TextBoxOnTextChanged;
             TextBox.TextArea.TextEntering += TextAreaOnTextEntering;
             TextBox.TextArea.TextEntered += TextAreaOnTextEntered;
             TextBox.KeyUp += TextBoxOnKeyUp;
+            TextBox.PreviewMouseDoubleClick += TextBoxOnPreviewMouseDoubleClick;
+        }
+
+        private void TextBoxOnPreviewMouseDoubleClick(Object sender, MouseButtonEventArgs e)
+        {
+            if ((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+            {
+                AutoComplete();
+            }
         }
 
         private void TextBoxOnKeyUp(Object sender, KeyEventArgs e)
@@ -59,13 +68,28 @@ namespace Troublemaker.Editor.Pages
                 return;
             }
 
-            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Alt) != ModifierKeys.Alt)
-                return;
+            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+            {
+                AutoComplete();
+            }
+            else if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                OnCtrlEnter();
+            }
+        }
 
+        private void OnCtrlEnter()
+        {
+            if (SaveClick.CanExecute(null))
+                SaveClick.Execute(null);
+        }
+
+        private void AutoComplete()
+        {
             String text = TextBox.Text;
             if (text.Length < 1)
                 return;
-            
+
             Int32 offset = Math.Min(TextBox.TextArea.Caret.Offset, text.Length - 1);
             Int32 min = offset;
             Int32 max = offset;
@@ -84,7 +108,7 @@ namespace Troublemaker.Editor.Pages
                     break;
                 }
             }
-            
+
             while (max < text.Length - 1)
             {
                 var ch = text[max + 1];
@@ -97,10 +121,10 @@ namespace Troublemaker.Editor.Pages
                     break;
                 }
             }
-            
+
             if (min == max)
                 return;
-            
+
             if (rightBracket)
             {
                 TextBox.Document.Replace(max + 1, 1, String.Empty);
@@ -108,6 +132,7 @@ namespace Troublemaker.Editor.Pages
                     TextBox.Document.Replace(min - 1, 1, String.Empty);
                 return;
             }
+
             if (leftBracket)
             {
                 TextBox.Document.Replace(min - 1, 1, String.Empty);
@@ -133,7 +158,7 @@ namespace Troublemaker.Editor.Pages
             _completionWindow.StartOffset = min;
             _completionWindow.EndOffset = max + 1;
             IList<ICompletionData> data = _completionWindow.CompletionList.CompletionData;
-                
+
             String language = TranslateLanguages.Instance.CurrentLanguage;
             TranslationFile file = TranslationFile.Get(language);
             var completionData = TagsHighlighting.Ensure(file.Tags).CompletionData;
@@ -142,10 +167,10 @@ namespace Troublemaker.Editor.Pages
 
             _completionWindow.Show();
             _completionWindow.Closed += OnCompletionWindowOnClosed;
-            
+
             TextDocument document = TextBox.TextArea.Document;
             if (document != null)
-                _completionWindow.CompletionList.SelectItem(document.GetText(min, max - min/* + 1*/));
+                _completionWindow.CompletionList.SelectItem(document.GetText(min, max - min /* + 1*/));
         }
 
         private void TextBoxOnTextChanged(Object? sender, EventArgs e)
@@ -157,7 +182,7 @@ namespace Troublemaker.Editor.Pages
         }
 
         private static readonly Regex FoldingRegex = new Regex(@"(\[[^]]+\]+)+", RegexOptions.Compiled);
-        
+
         private FoldingManager _foldingManager;
 
         private void UpdateFolding()
@@ -191,11 +216,12 @@ namespace Troublemaker.Editor.Pages
 
         private void TextAreaOnTextEntered(Object sender, TextCompositionEventArgs e)
         {
-            if (e.Text == "{") {
+            if (e.Text == "{")
+            {
                 // Open code completion after the user has pressed {:
                 _completionWindow = new CompletionWindow(TextBox.TextArea);
                 IList<ICompletionData> data = _completionWindow.CompletionList.CompletionData;
-                
+
                 String language = TranslateLanguages.Instance.CurrentLanguage;
                 TranslationFile file = TranslationFile.Get(language);
                 var completionData = TagsHighlighting.Ensure(file.Tags).CompletionData;
@@ -211,7 +237,7 @@ namespace Troublemaker.Editor.Pages
         {
             _completionWindow = null;
         }
-        
+
         private void TextAreaOnTextEntering(Object sender, TextCompositionEventArgs e)
         {
             if (e.Text.Length < 1)
@@ -223,13 +249,13 @@ namespace Troublemaker.Editor.Pages
                 e.Handled = true;
                 return;
             }
-            
+
             if (_completionWindow == null)
                 return;
 
             if (Char.IsLetterOrDigit(e.Text[0]))
                 return;
-            
+
             // Whenever a non-letter is typed while the completion window is open,
             // insert the currently selected element.
             _completionWindow.CompletionList.RequestInsertion(e);
@@ -241,11 +267,11 @@ namespace Troublemaker.Editor.Pages
 
             if (StageController.Instance.SelectedControl == null)
             {
-                IInputElement focusedControl =  Keyboard.FocusedElement;
+                IInputElement focusedControl = Keyboard.FocusedElement;
                 TextBox.Focus();
                 focusedControl?.Focus();
             }
-            
+
             TextBox.Document.UndoStack.ClearAll();
         }
 
@@ -270,7 +296,7 @@ namespace Troublemaker.Editor.Pages
         private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             TranslateControl control = (TranslateControl) d;
-            StageMessage message = (StageMessage)e.NewValue;
+            StageMessage message = (StageMessage) e.NewValue;
 
             String language = TranslateLanguages.Instance.CurrentLanguage;
             TranslationFile file = TranslationFile.Get(language);
@@ -283,7 +309,7 @@ namespace Troublemaker.Editor.Pages
                 ImageSource? background = PortraitSet.Instance.FindIcon(speaker.Name, speaker.Emotion);
                 if (background is null && !String.IsNullOrEmpty(speaker.ImagePath))
                     background = ImageSets.FindImageSource(speaker.ImagePath);
-                
+
                 control.SpeakerBackground = background;
                 StageActionBalloonType? floating = speaker.Floating;
                 if (floating != null)
@@ -294,7 +320,7 @@ namespace Troublemaker.Editor.Pages
                         control.SpeakerForeground = GeometryRenderer.ShoutBalloon;
                     else if (floating.IsThink)
                         control.SpeakerForeground = GeometryRenderer.ThinkBalloon;
-                    
+
                     if (floating.IsPlayer) control.SpeakerForegroundColor = Color.FromArgb(128, 0, 255, 0);
                     else if (floating.IsCivil) control.SpeakerForegroundColor = Color.FromArgb(128, 0, 255, 255);
                     else if (floating.IsAlly) control.SpeakerForegroundColor = Color.FromArgb(128, 128, 255, 0);
@@ -371,7 +397,7 @@ namespace Troublemaker.Editor.Pages
             get => (Geometry?) GetValue(SpeakerForegroundProperty);
             set => SetValue(SpeakerForegroundProperty, value);
         }
-        
+
         public Color? SpeakerForegroundColor
         {
             get => (Color?) GetValue(SpeakerForegroundColorProperty);
@@ -399,7 +425,7 @@ namespace Troublemaker.Editor.Pages
             public void Execute(Object parameter)
             {
                 if (!LoginWindow.CheckAuthenticated()) return;
-                
+
                 _control.History.SaveChanges();
                 RaiseCanExecuteChanged();
             }
