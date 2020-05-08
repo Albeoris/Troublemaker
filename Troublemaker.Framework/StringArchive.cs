@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Troublemaker.Framework
 {
@@ -76,10 +77,7 @@ namespace Troublemaker.Framework
                 if (zip is null)
                     return map;
 
-                if (names.Count < ParallelThreshold)
-                    ReadSequentially(zip);
-                else
-                    ReadParallel(zip);
+                ReadSequentially(zip);
             }
 
             void ReadSequentially(ZipArchive zip)
@@ -94,22 +92,9 @@ namespace Troublemaker.Framework
                 }
             }
 
-            void ReadParallel(ZipArchive zip)
-            {
-                Parallel.ForEach(names, name =>
-                {
-                    String? str = TryRead(zip, name);
-                    if (str is null)
-                        return;
-
-                    lock (map)
-                        map.Add(name, str);
-                });
-            }
-
             return map;
         }
-        
+
         public Map<String> TryReadDirectory(String directoryPath)
         {
             using (var zip = TryOpenRead())
@@ -164,18 +149,27 @@ namespace Troublemaker.Framework
 
         private static String? TryRead(ZipArchive zip, String name)
         {
-            name = GetUniqueName(name);
-
-            ZipArchiveEntry? entry = zip.GetEntry(name);
-            if (entry is null)
+            if (!TryFind(zip, name, out var entry))
                 return null;
 
             return Read(entry);
         }
 
+        private static Boolean TryFind(ZipArchive zip, String name, out ZipArchiveEntry entry)
+        {
+            name = GetUniqueName(name);
+
+            entry = zip.GetEntry(name);
+            return !(entry is null);
+        }
+
         private static String Read(ZipArchiveEntry entry)
         {
-            using (var content = entry.Open())
+            using (var content = entry.Open()) return ReadAsString(content);
+        }
+
+        private static String ReadAsString(Stream content)
+        {
             using (var sr = new StreamReader(content, ContentEncoding))
                 return sr.ReadToEnd();
         }

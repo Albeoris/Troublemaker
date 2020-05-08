@@ -18,6 +18,7 @@ using Troublemaker.Editor.Settings;
 using Troublemaker.Editor.ViewModels;
 using Troublemaker.Xml;
 using Troublemaker.Xml.Dialogs;
+using Troublemaker.Xml.Quests;
 using Localization = Troublemaker.Xml.Localization;
 
 namespace Troublemaker.Editor.Pages
@@ -66,7 +67,7 @@ namespace Troublemaker.Editor.Pages
 
         private IEnumerable<StageViewModel> LoadDialogs()
         {
-            ProgressWindow wnd = ProgressWindow.ShowBackground("Dialogs loading");
+            ProgressWindow wnd = ProgressWindow.ShowBackground("Loading dialogs...");
             try
             {
                 String[] dialogs = Directory.GetFiles(@"Data/xml/Dialog", "*.xml", SearchOption.TopDirectoryOnly);
@@ -74,6 +75,34 @@ namespace Troublemaker.Editor.Pages
                 foreach (var dlgPath in dialogs)
                 {
                     Dialog dlg = XmlDeserializerFactory.Default.Deserialize<Dialog>(dlgPath);
+                    dlg.Translate(LocalizationMap.Instance.Tree);
+
+                    String fileName = Path.GetFileNameWithoutExtension(dlgPath);
+                    wnd.Increment(1);
+
+                    var vm = new StageViewModel(fileName, dlg);
+                    if (vm.EnumerateExpandable.Count > 0)
+                        yield return vm;
+                    else
+                        continue;
+                }
+            }
+            finally
+            {
+                wnd.Close();
+            }
+        }
+        
+        private IEnumerable<StageViewModel> LoadQuests()
+        {
+            ProgressWindow wnd = ProgressWindow.ShowBackground("Loading quests...");
+            try
+            {
+                String[] dialogs = Directory.GetFiles(@"Data/xml/Quest", "*.xml", SearchOption.TopDirectoryOnly);
+                wnd.SetTotal(dialogs.Length);
+                foreach (var dlgPath in dialogs)
+                {
+                    DialogQuests dlg = XmlDeserializerFactory.Default.Deserialize<DialogQuests>(dlgPath);
                     dlg.Translate(LocalizationMap.Instance.Tree);
 
                     String fileName = Path.GetFileNameWithoutExtension(dlgPath);
@@ -462,15 +491,18 @@ namespace Troublemaker.Editor.Pages
                 Regex tags = new Regex(@"\{([^}]+?)\}", RegexOptions.Compiled);
 
                 var result = new Dictionary<TextId, (String comment, String text)>();
-                foreach (LocalizeString str in dic.Enumerate().OrderBy(s => s.Key))
+
+                LocalizeString[] items = dic.Enumerate().OrderBy(s => s.Key).ToArray();
+                translationFile.EnsureLoaded(items.Select(i => i.Key).ToArray());
+                foreach (LocalizeString str in items)
                 {
                     if (str.Key.Type != "Text")
                         continue;
-
+                    
                     String comment = str.Comment;
                     String text = str.Text;
 
-                    TranslationHistory? history = translationFile.FindHistory(str.Key);
+                    TranslationHistory? history = translationFile.FindLoadedHistory(str.Key);
                     if (history != null)
                     {
                         TranslationInfo latest = history.Last;
@@ -525,6 +557,9 @@ namespace Troublemaker.Editor.Pages
                     break;
                 case "Dialogs":
                     Stages = LoadDialogs().ToArray();
+                    break;
+                case "Quests":
+                    Stages = LoadQuests().ToArray();
                     break;
                 default:
                     throw new NotSupportedException(type);

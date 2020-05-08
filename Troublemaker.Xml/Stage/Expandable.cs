@@ -16,33 +16,33 @@ namespace Troublemaker.Xml
             return (name, new ExpandableCollection(name, expandable));
         }
 
-        public static IEnumerable<(Int32 level, IExpandable?)> EnumerateChildrenRecursively(this IExpandable root, Boolean includeRoot = false)
+        public static IEnumerable<(Int32 level, String name, IExpandable?)> EnumerateChildrenRecursively(this IExpandable root, Boolean includeRoot = false)
         {
             if (root is null)
                 yield break;
             
             if (includeRoot)
-                yield return (0, root);
+                yield return (0, "Root", root);
             
-            var queue = new LinkedList<(Int32 level, IExpandable expandable)>();
+            var queue = new LinkedList<(Int32 level, String name, IExpandable expandable)>();
             Boolean hasValues = false;
             
-            foreach ((_, IExpandable child) in root.EnumerateChildren())
+            foreach ((String name, IExpandable child) in root.EnumerateChildren())
             {
                 if (child is null)
                     continue;
                 
-                queue.AddLast((1, child));
+                queue.AddLast((1, name, child));
                 hasValues = true;
             }
 
             if (hasValues)
-                queue.AddLast((1, ExpandableEnd.Instance));
+                queue.AddLast((1, "End", ExpandableEnd.Instance));
 
-            LinkedListNode<(Int32 level, IExpandable? expandable)>? node;
+            LinkedListNode<(Int32 level, String name, IExpandable? expandable)>? node;
             while ((node = queue.First) != null)
             {
-                (Int32 level, IExpandable? expandable) action = node.Value;
+                (Int32 level, String name, IExpandable? expandable) action = node.Value;
                 yield return action;
 
                 if (action.expandable != ExpandableEnd.Instance)
@@ -51,17 +51,17 @@ namespace Troublemaker.Xml
 
                     hasValues = false;
                     
-                    foreach (var (_, expandable) in list)
+                    foreach (var (childName, expandable) in list)
                     {
                         if (expandable is null)
                             continue;
                         
-                        node = queue.AddAfter(node, (action.level + 1, expandable));
+                        node = queue.AddAfter(node, (action.level + 1, childName, expandable));
                         hasValues = true;
                     }
 
                     if (hasValues)
-                        queue.AddAfter(node, (action.level + 1, ExpandableEnd.Instance));
+                        queue.AddAfter(node, (action.level + 1, "End", ExpandableEnd.Instance));
                 }
 
                 queue.RemoveFirst();
