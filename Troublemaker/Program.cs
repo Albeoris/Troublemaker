@@ -48,7 +48,19 @@ namespace Troublemaker.Unpacker
                 String outputPath = Path.Combine(arguments.OutputDirectory, entry.RelativePath);
 
                 if (!File.Exists(inputPath))
+                {
+                    totalSize -= entry.Size;
+                    UpdateProcessedSize(in totalSize, ref processedSize, 0);
                     continue;
+                }
+
+                DateTime lastWriteTime = File.GetLastWriteTime(inputPath);
+                if (File.Exists(outputPath) && File.GetLastWriteTime(outputPath) == lastWriteTime)
+                {
+                    totalSize -= entry.Size;
+                    UpdateProcessedSize(in totalSize, ref processedSize, 0);
+                    continue;
+                }
 
                 String directoryPath = Path.GetDirectoryName(outputPath);
                 Directory.CreateDirectory(directoryPath);
@@ -65,6 +77,8 @@ namespace Troublemaker.Unpacker
                         UpdateProcessedSize(in totalSize, ref processedSize, read);
                     }
                 }
+
+                File.SetLastWriteTime(outputPath, lastWriteTime);
             }
 
             UpdateProcessedSize(in totalSize, ref processedSize, 0);

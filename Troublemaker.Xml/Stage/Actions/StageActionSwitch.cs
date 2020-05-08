@@ -10,6 +10,8 @@ namespace Troublemaker.Xml
 
         [XPath("CaseDefinition/*")] public StageCase[] CaseDefinition;
         
+        public Boolean CanFlatten => false;
+        
         public override IEnumerable<(String name, IExpandable expandable)> EnumerateChildren()
         {
             yield return CaseDefinition.Named(nameof(CaseDefinition));

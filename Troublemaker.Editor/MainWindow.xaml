@@ -38,6 +38,7 @@
         <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch">
             <RadioButton Content="Stages" IsChecked="True" Checked="ToggleButton_OnChecked" Margin="3"/>
             <RadioButton Content="Dialogs" Checked="ToggleButton_OnChecked" Margin="3"/>
+            <RadioButton Content="Quests" Checked="ToggleButton_OnChecked" Margin="3"/>
         </StackPanel>
         
         <GroupBox Header="Files" Grid.Column="0" Grid.Row="1" Margin="0,0,3,0">

@@ -14,7 +14,7 @@ namespace Troublemaker.Editor.ViewModels
 
         public String Name { get; }
 
-        protected StageExpandableViewModel(IStage stage, String name, IExpandable expandable)
+        protected internal StageExpandableViewModel(IStage stage, String name, IExpandable expandable)
         {
             _stage = stage;
             _expandable = expandable;
@@ -42,8 +42,8 @@ namespace Troublemaker.Editor.ViewModels
             
             Stack<MessageBuilder> builders = new Stack<MessageBuilder>();
             builders.Push(root);
-            
-            foreach ((Int32 level, IExpandable? expandable) in _expandable.EnumerateChildrenRecursively(true).ToArray())
+
+            foreach ((Int32 level, String name, IExpandable? expandable) in _expandable.EnumerateChildrenRecursively(true).ToArray())
             {
                 if (expandable == ExpandableEnd.Instance)
                 {
@@ -58,7 +58,7 @@ namespace Troublemaker.Editor.ViewModels
 
                 if (builder.Level < level)
                 {
-                    builder = builder.Child(expandable.NodeName);
+                    builder = builder.Child(name, expandable);
                     builders.Push(builder);
                 }
 
@@ -69,7 +69,7 @@ namespace Troublemaker.Editor.ViewModels
             if (!builders.TryPop(out var last) || builders.Count != 0 || last != root)
                 throw new InvalidOperationException("!builders.TryPop(out var last) || builders.Count != 0 || last != root");
 
-            if (!root.TryBuild(out var result))
+            if (!root.TryBuild(root.Name, out var result))
                 return null;
 
             if (result is StageMessageGroup group)

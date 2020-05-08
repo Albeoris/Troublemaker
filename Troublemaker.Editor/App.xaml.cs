@@ -21,7 +21,8 @@ namespace Troublemaker.Editor
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            Un();
+            SubscribeUnhandledExceptions();
+            
             var path = Path.GetFullPath(@"Dictionary\keymap.dkm");
             if (!File.Exists(path))
             {
@@ -37,7 +38,7 @@ namespace Troublemaker.Editor
             base.OnStartup(e);
         }
 
-        private void Un()
+        private void SubscribeUnhandledExceptions()
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
             // Application.Current.DispatcherUnhandledException += OnDispatcherUnhandledException;

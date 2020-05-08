@@ -11,6 +11,7 @@ namespace Troublemaker.Xml
         [XPath("ActionList/*")] public StageAction[] ActionList;
 
         public String NodeName => $"Case ({CaseValue})";
+        public Boolean CanFlatten => false;
         
         public IEnumerable<(String name, IExpandable expandable)> EnumerateChildren()
         {

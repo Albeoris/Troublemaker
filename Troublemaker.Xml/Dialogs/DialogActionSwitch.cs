@@ -20,16 +20,14 @@ namespace Troublemaker.Xml.Dialogs
             }
         }
         
+        public Boolean CanFlatten => false;
+        
         public override IEnumerable<(String name, IExpandable expandable)> EnumerateChildren()
         {
             if (Cases is null)
                 yield break;
 
-            for (var index = 0; index < Cases.Length; index++)
-            {
-                var section = Cases[index];
-                yield return section.Actions.Named($"Case {index}");
-            }
+            yield return Cases.Named(nameof(Cases));
         }
     }
 }

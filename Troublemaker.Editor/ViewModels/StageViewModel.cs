@@ -21,10 +21,10 @@ namespace Troublemaker.Editor.ViewModels
         private static IReadOnlyList<StageExpandableViewModel> Filter(IStage stage)
         {
             StageExpandableCollectionViewModel[] result = Enumerate(stage).ToArray();
+            if (result.Length == 1)
+                return result[0].Rewrap(stage).ToArray();
 
-            return result.Length == 1
-                ? result[0].Components.ToArray()
-                : result;
+            return result;
         }
 
         private static IEnumerable<StageExpandableCollectionViewModel> Enumerate(IStage stage)

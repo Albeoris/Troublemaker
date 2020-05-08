@@ -30,11 +30,11 @@ namespace Troublemaker.Xml
         public TranslationTags Tags { get; }
 
         public TranslationHistory GetHistory(TextId key) => _histories.Ensure(key, EnsureTranslationHistory);
-        public TranslationHistory? FindHistory(TextId key) => _histories.TryGetValue(key, out var result) ? result : default;
+        public TranslationHistory? FindLoadedHistory(TextId key) => _histories.TryGetValue(key, out var result) ? result : default;
 
-        public void Read(IReadOnlyList<TextReference> keys)
+        public void EnsureLoaded(IReadOnlyList<TextId> keys)
         {
-            TextId[] ids = keys.Select(k => k.Id).Distinct().ToArray();
+            TextId[] ids = keys.Distinct().Where(k => !_histories.ContainsKey(k)).ToArray();
             _histories.EnsureCapacity(ids.Length);
             Map<String> content = Archive.TryRead(ids.Select(id => id.FormatPath()).ToArray());
             foreach (var key in ids)
