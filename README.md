@@ -6,13 +6,13 @@ The program requires internal game resources. Dandylion allowed to distribute th
 
 The program was written very quickly, it may have errors. Please advise if such appear.
 
-The program was not tested in real conditions, you can lose all your data. Make backups, use at your own risk.
+The program has just begun to be used in real situations, you can lose all your data. Make backups, use at your own risk.
 
 
 
 **Download:**
 
-https://yadi.sk/d/S91D1IVgIA8WOw
+https://yadi.sk/d/O5wmCHuPr40DHQ
 
 
 
@@ -36,13 +36,17 @@ All translation data is stored in the Translation_???.zip archive in the program
 
 - F1 - Change user
 - F5 - Produce dic_text.dic
-- Alt+1/2/3 - Go to UI-group on the Stage tab
-- Alt+Left/Right - Change current language on the Stage tab
+- Alt+1/2/3 - Switch focus to UI-group
+- Alt+Left/Right - Change current language
+- Alt+Up/Down - Go to next / previous message
+- Ctrl+Enter - Save current text
+- Ctrl+Shift+S - Save all visible text changes
 
 
 
 **History:**
 
+`v2020.05.12` - quests, hotkeys, bug fixes
 `v2020.04.12` - dialogs, highlighting and folding tags, bug fixes
 `v2020.04.07` - initial version
 
