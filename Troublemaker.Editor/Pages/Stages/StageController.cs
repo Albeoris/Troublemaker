@@ -479,7 +479,7 @@ namespace Troublemaker.Editor.Pages
 
                 if (dlg.ShowDialog() != true)
                     return;
-
+                
                 String dictionaryPath = dlg.FileName;
 
                 SaveDictionaryMode mode = SaveDictionaryMode.Latest;
@@ -494,6 +494,10 @@ namespace Troublemaker.Editor.Pages
 
                 LocalizeString[] items = dic.Enumerate().OrderBy(s => s.Key).ToArray();
                 translationFile.EnsureLoaded(items.Select(i => i.Key).ToArray());
+
+                // Internal
+                // MakeHistoryFromLocalizedDictionary(items, translationFile);
+                
                 foreach (LocalizeString str in items)
                 {
                     if (str.Key.Type != "Text")
@@ -543,6 +547,38 @@ namespace Troublemaker.Editor.Pages
                         sw.Write('\t');
 
                         sw.WriteLine(text);
+                    }
+                }
+            }
+
+            private static void MakeHistoryFromLocalizedDictionary(LocalizeString[] items, TranslationFile translationFile)
+            {
+                Regex regex = new Regex(@"[А-Яа-я]+");
+                Localize.Read("tmp", "Text", @"C:\Git\C#\Troublemaker\Output\netcoreapp3.0\Dictionary\rus\dic_text.dic");
+                Localization tmp = Localize.GetDic("tmp");
+                Localization rus = Localize.GetDic("rus");
+                Localization eng = Localize.GetDic("eng");
+                
+                //
+                tmp = rus;
+                
+                foreach (LocalizeString str in items)
+                {
+                    if (str.Key.Type != "Text")
+                        continue;
+
+                    TranslationHistory? history = translationFile.FindLoadedHistory(str.Key);
+                    if (history == null)
+                    {
+                        if (tmp.TryGetValue(str.Key, out var russian) && regex.IsMatch(russian.Text))
+                        {
+                            String russianText = russian.Text;
+                            rus[str.Key].Text = eng[str.Key].Text;
+                            
+                            history = translationFile.GetHistory(str.Key);
+                            history.CurrentText = russianText;
+                            history.SaveChanges();
+                        }
                     }
                 }
             }
