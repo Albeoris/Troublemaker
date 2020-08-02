@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Troublemaker.Editor.Pages;
+using Troublemaker.Xml;
 
 namespace Troublemaker.Editor
 {

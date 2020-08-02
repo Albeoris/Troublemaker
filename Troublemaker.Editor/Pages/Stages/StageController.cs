@@ -16,6 +16,7 @@ using Microsoft.Win32;
 using Troublemaker.Editor.Framework;
 using Troublemaker.Editor.Settings;
 using Troublemaker.Editor.ViewModels;
+using Troublemaker.Framework;
 using Troublemaker.Xml;
 using Troublemaker.Xml.Dialogs;
 using Troublemaker.Xml.Quests;
@@ -120,12 +121,49 @@ namespace Troublemaker.Editor.Pages
                 wnd.Close();
             }
         }
+        
+        // private IEnumerable<StageViewModel> LoadMasteries()
+        // {
+        //     ProgressWindow wnd = ProgressWindow.ShowBackground("Loading masteries...");
+        //     try
+        //     {
+        //         Map<XmlMastery> masteries = DB.Masteries.Entries;
+        //         wnd.SetTotal(masteries.Count);
+        //
+        //         LocalizationTree tree = LocalizationMap.Instance.Tree["Mastery"];
+        //         foreach (XmlMastery mastery in masteries)
+        //         {
+        //             mastery.Translate(tree);
+        //             wnd.Increment(1);
+        //         }
+        //
+        //         IEnumerable<IGrouping<String, XmlMastery>> grouped = masteries.Values
+        //             .OrderBy(g => g.Category)
+        //             .ThenBy(g => g.Name)
+        //             .GroupBy(m => m.Category);
+        //
+        //         List<ExpandableCollection> collections = new List<ExpandableCollection>();
+        //         foreach (IGrouping<String, XmlMastery> g in grouped)
+        //         {
+        //             String category = String.IsNullOrEmpty(g.Key) ? "Unknown" : g.Key;
+        //             collections.Add(new ExpandableCollection(category, g));
+        //         }
+        //
+        //         var vm = new StageViewModel("Masteries", new StageWrapper(collections));
+        //         yield return vm;
+        //     }
+        //     finally
+        //     {
+        //         wnd.Close();
+        //     }
+        // }
 
         public static readonly DependencyProperty StagesProperty = DependencyProperty.Register("Stages", typeof(StageViewModel[]), typeof(StageController), new PropertyMetadata(Array.Empty<StageViewModel>()));
         public static readonly DependencyProperty SelectedStageProperty = DependencyProperty.Register("SelectedStage", typeof(StageViewModel), typeof(StageController), new PropertyMetadata(default(StageViewModel)));
         public static readonly DependencyProperty SelectedComponentProperty = DependencyProperty.Register("SelectedComponent", typeof(StageExpandableViewModel), typeof(StageController), new PropertyMetadata(default(StageExpandableViewModel), OnSelectedComponentChanged));
         public static readonly DependencyProperty SelectedMessageProperty = DependencyProperty.Register("SelectedMessage", typeof(StageMessage), typeof(StageController), new PropertyMetadata(default(StageMessage), OnSelectedMessageChanged));
         public static readonly DependencyProperty SelectedSpeakerProperty = DependencyProperty.Register("SelectedSpeaker", typeof(ImageSource), typeof(StageController), new PropertyMetadata(default(ImageSource)));
+        public static readonly DependencyProperty SelectedPreviewProperty = DependencyProperty.Register("SelectedPreview", typeof(Object), typeof(StageController), new PropertyMetadata(default(Object)));
         public static readonly DependencyProperty SelectedHistoryProperty = DependencyProperty.Register("SelectedHistory", typeof(TranslationHistory), typeof(StageController), new PropertyMetadata(default(TranslationHistory), OnSelectedHistoryChanged));
 
         public StageViewModel[] Stages
@@ -156,6 +194,12 @@ namespace Troublemaker.Editor.Pages
         {
             get => (ImageSource?) GetValue(SelectedSpeakerProperty);
             set => SetValue(SelectedSpeakerProperty, value);
+        }
+        
+        public Object? SelectedPreview
+        {
+            get => (Object?) GetValue(SelectedPreviewProperty);
+            set => SetValue(SelectedPreviewProperty, value);
         }
 
         public TranslationHistory? SelectedHistory
@@ -230,6 +274,8 @@ namespace Troublemaker.Editor.Pages
 
         private static void RefreshSelectedSpeaker(StageSpeakerInfo? speaker, StageController control)
         {
+            // control.SelectedPreview = new TranslateMasteryPreview();
+                
             if (speaker == null)
             {
                 control.SelectedSpeaker = null;
@@ -243,7 +289,6 @@ namespace Troublemaker.Editor.Pages
             if (fullImage == null)
             {
                 control.SelectedSpeaker = PortraitSet.Instance.FindIcon(name, emotion);
-                ;
                 return;
             }
 
@@ -597,6 +642,9 @@ namespace Troublemaker.Editor.Pages
                 case "Quests":
                     Stages = LoadQuests().ToArray();
                     break;
+                // case "Masteries":
+                //     Stages = LoadMasteries().ToArray();
+                //     break;
                 default:
                     throw new NotSupportedException(type);
             }
