@@ -603,3 +603,4 @@ fabric.properties
 /.idea/.idea.Troublemaker
 /Output/netcoreapp3.0
 /Troublemaker/Properties/launchSettings.json
+/Troublemaker.View/Properties/launchSettings.json

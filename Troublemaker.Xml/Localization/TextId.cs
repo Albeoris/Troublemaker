@@ -28,13 +28,24 @@ namespace Troublemaker.Xml
 
         public static TextId ParsePath(String value)
         {
-            Int32 index = value.IndexOf('/');
-            if (index < 1)
+            var result = TryParsePath(value);
+            if (result is null)
                 throw new NotSupportedException(value);
 
+            return result.Value;
+        }
+
+        public static TextId? TryParsePath(String value)
+        {
+            Int32 index = value.IndexOf('/');
+            if (index < 1)
+                return null;
+
             var type = value.Substring(0, index);
-            var id = Int32.Parse(value.Substring(index + 1));
-            return new TextId(type, id);
+            if (Int32.TryParse(value.Substring(index + 1), out var id))
+                return new TextId(type, id);
+
+            return null;
         }
 
         public String FormatPath() => $"{Type}/{Index}";
