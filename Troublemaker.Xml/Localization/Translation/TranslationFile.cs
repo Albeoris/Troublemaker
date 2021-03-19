@@ -24,6 +24,17 @@ namespace Troublemaker.Xml
 
             String? tagsContent = Archive.TryRead("Troublemaker/Tags.txt");
             Tags = TranslationTags.Deserialize(tagsContent);
+
+            Map<String> userData = Archive.TryReadDirectory(String.Empty);
+            foreach ((String path, String serializedHistory) in userData.Pairs)
+            {
+                TextId? key = TextId.TryParsePath(path);
+                if (key?.Type != "Text")
+                    continue;
+
+                var history = TranslationHistory.Deserialize(serializedHistory);
+                _histories.Add(key.Value, history);
+            }
         }
 
         public StringArchive Archive { get; }
