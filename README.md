@@ -12,7 +12,7 @@ The program has just begun to be used in real situations, you can lose all your 
 
 **Download:**
 
-https://yadi.sk/d/O5wmCHuPr40DHQ
+https://github.com/Albeoris/Troublemaker/releases
 
 
 
