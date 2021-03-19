@@ -600,6 +600,3 @@ fabric.properties
 # Fody - auto-generated XML schema
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,rider,csharp
-/.idea/.idea.Troublemaker
-/Output/netcoreapp3.0
-/Troublemaker/Properties/launchSettings.json
