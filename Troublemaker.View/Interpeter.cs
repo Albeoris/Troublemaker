@@ -661,13 +661,13 @@ namespace Troublemaker.View
         
         public void Exec()
         {
-            _lua.DoFile(@"W:\Steam\steamapps\common\Troubleshooter\Data\CEGUI\datafiles\lua_scripts\client_Tooltip.lua");
-            _lua.DoFile(@"W:\Steam\steamapps\common\Troubleshooter\Data\script\shared\shared_utility.lua");
-            _lua.DoFile(@"W:\Steam\steamapps\common\Troubleshooter\Data\script\shared\shared_status.lua");
-            _lua.DoFile(@"W:\Steam\steamapps\common\Troubleshooter\Data\script\shared\shared_tooltip.lua");
-            _lua.DoFile(@"W:\Steam\steamapps\common\Troubleshooter\Data\script\shared\shared_ability.lua");
+            _lua.DoFile(@"Data\CEGUI\datafiles\lua_scripts\client_Tooltip.lua");
+            _lua.DoFile(@"Data\script\shared\shared_utility.lua");
+            _lua.DoFile(@"Data\script\shared\shared_status.lua");
+            _lua.DoFile(@"Data\script\shared\shared_tooltip.lua");
+            _lua.DoFile(@"Data\script\shared\shared_ability.lua");
 
-            foreach (String filePath in Directory.EnumerateFiles(@"W:\Steam\steamapps\common\Troubleshooter\Data\xml", "*.xml"))
+            foreach (String filePath in Directory.EnumerateFiles(@"Data\xml", "*.xml"))
             {
                 if (!filePath.EndsWith("FilteringWord.xml") 
                     && !filePath.EndsWith("layout.xml")
