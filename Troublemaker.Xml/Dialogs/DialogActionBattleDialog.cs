@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Troublemaker.Xml.Dialogs
 {
+
     [XPath("self::property[@Type='BattleDialog']")]
     public sealed class DialogActionBattleDialog : DialogAction, IMessageHandler
     {

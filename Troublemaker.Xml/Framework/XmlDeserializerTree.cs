@@ -36,7 +36,7 @@ namespace Troublemaker.Xml
         {
             return _dic[type];
         }
-        
+
         public XmlComplexDeserializer? FindBase(Type type)
         {
             if (_dic.TryGetValue(type, out var deserializer))
@@ -48,11 +48,11 @@ namespace Troublemaker.Xml
             return null;
         }
 
-        public IDeserializer GetDeserializer(Type type)
+        public IDeserializer GetDeserializer(Type type, XPathExpression selector)
         {
             if (type.IsArray)
             {
-                return GetArrayDeserializer(type);
+                return GetArrayDeserializer(type, selector);
             }
 
             if (type.IsGenericType)
@@ -61,22 +61,22 @@ namespace Troublemaker.Xml
                 Type[] genericArguments = type.GetGenericArguments();
 
                 if (generic == typeof(IReadOnlyCollection<>))
-                    return GetArrayDeserializer(genericArguments[0]);
+                    return GetArrayDeserializer(genericArguments[0], selector);
 
                 if (generic == typeof(IReadOnlyList<>))
-                    return GetArrayDeserializer(genericArguments[0]);
+                    return GetArrayDeserializer(genericArguments[0], selector);
 
                 if (generic == typeof(IEnumerable<>))
-                    return GetArrayDeserializer(genericArguments[0]);
+                    return GetArrayDeserializer(genericArguments[0], selector);
 
                 if (generic == typeof(Dictionary<,>))
-                    return GetDictionaryDeserializer(type, genericArguments[0], genericArguments[1]);
+                    return GetDictionaryDeserializer(type, genericArguments[0], genericArguments[1], selector);
 
                 if (generic == typeof(IDictionary<,>))
-                    return GetDictionaryDeserializer(type, genericArguments[0], genericArguments[1]);
+                    return GetDictionaryDeserializer(type, genericArguments[0], genericArguments[1], selector);
 
                 if (generic == typeof(Map<>))
-                    return GetDictionaryDeserializer(type, typeof(String), genericArguments[0]);
+                    return GetDictionaryDeserializer(type, typeof(String), genericArguments[0], selector);
 
                 throw new NotSupportedException(type.FullName);
             }
@@ -109,18 +109,25 @@ namespace Troublemaker.Xml
             return new XmlAttributeDeserializer(valueParser);
         }
 
-        private IDeserializer GetArrayDeserializer(Type type)
+        private IDeserializer GetArrayDeserializer(Type type, XPathExpression selector)
         {
             var elementType = type.GetElementType() ?? throw new NotSupportedException(type.FullName);
-            var elementDeserializer = GetDeserializer(elementType);
+            var elementDeserializer = GetDeserializer(elementType, selector);
             return new XmlArrayDeserializer(elementType, elementDeserializer);
         }
 
-        private IDeserializer GetDictionaryDeserializer(Type type, Type keyType, Type valueType)
+        private IDeserializer GetDictionaryDeserializer(Type type, Type keyType, Type valueType, XPathExpression selector)
         {
-            var keyDeserializer = GetDeserializer(keyType);
-            var valueDeserializer = GetDeserializer(valueType);
-            return new XmlDictionaryDeserializer(type, keyDeserializer, valueDeserializer);
+            if (selector.Expression == "@*")
+            {
+                return new XmlAttributesDeserializer(type);
+            }
+            else
+            {
+                var keyDeserializer = GetDeserializer(keyType, selector);
+                var valueDeserializer = GetDeserializer(valueType, selector);
+                return new XmlDictionaryDeserializer(type, keyDeserializer, valueDeserializer);
+            }
         }
     }
 }

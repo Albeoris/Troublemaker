@@ -39,6 +39,7 @@
             <RadioButton Content="Stages" IsChecked="True" Checked="ToggleButton_OnChecked" Margin="3"/>
             <RadioButton Content="Dialogs" Checked="ToggleButton_OnChecked" Margin="3"/>
             <RadioButton Content="Quests" Checked="ToggleButton_OnChecked" Margin="3"/>
+            <!-- <RadioButton Content="Masteries" Checked="ToggleButton_OnChecked" Margin="3"/> -->
         </StackPanel>
         
         <GroupBox Header="Files" Grid.Column="0" Grid.Row="1" Margin="0,0,3,0">
@@ -87,6 +88,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Image Grid.Row="0" Stretch="UniformToFill" Source="{Binding SelectedSpeaker}"/>
+            <ContentPresenter Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" Content="{Binding SelectedPreview}"/>
             <GroupBox Grid.Row="1" Header="History">
                 <pages:TranslateHistoryControl/>
             </GroupBox>

@@ -46,7 +46,8 @@ namespace Troublemaker.Xml
                 }
                 else
                 {
-                    history = CreateTranslationHistory(key);
+                    continue;
+                    //history = CreateTranslationHistory(key);
                 }
 
                 _histories.Add(key, history);

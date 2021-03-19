@@ -32,7 +32,7 @@ namespace Troublemaker.Xml
                 if (xpath != null)
                 {
                     XPathExpression selector = xpath.Expression;
-                    IDeserializer reader = xmlDeserializers.GetDeserializer(field.FieldType);
+                    IDeserializer reader = xmlDeserializers.GetDeserializer(field.FieldType, selector);
                     IMemberSetter setter = new ReflectionFieldSetter(field);
                     var binding = new XmlDeserializationBinding(selector, reader, setter);
                     Readers.Add(binding);
@@ -45,7 +45,7 @@ namespace Troublemaker.Xml
                 if (xpath != null)
                 {
                     XPathExpression selector = xpath.Expression;
-                    IDeserializer reader = xmlDeserializers.GetDeserializer(property.PropertyType);
+                    IDeserializer reader = xmlDeserializers.GetDeserializer(property.PropertyType, selector);
                     IMemberSetter setter = new ReflectionPropertySetter(property);
                     var binding = new XmlDeserializationBinding(selector, reader, setter);
                     Readers.Add(binding);
